@@ -12,4 +12,11 @@
 #
 
 class WishItem < ActiveRecord::Base
+  attr_accessible :description, :url, :category_id, :user_id
+  
+  validates :description, :presence => true,
+                          :length => { :maximum => 4000 }
+  validates :url, :length => { :maximum => 2000 }
+  validates :category_id, :presence => true
+  validates :user_id, :presence => true
 end
