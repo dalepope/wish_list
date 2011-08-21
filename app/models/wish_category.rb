@@ -10,6 +10,8 @@
 
 class WishCategory < ActiveRecord::Base
   attr_accessible :name
+
+  has_many :wish_items
   
   validates :name, :presence => true,
                    :length   => { :maximum => 20 },

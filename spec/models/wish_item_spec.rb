@@ -20,9 +20,9 @@ describe WishItem do
     @user = Factory(:user)
     @attr = {
       :description => "Example item",
-      :url => "item@example.com",
+      :url => "http://www.example.com/item",
       :category_id => @category.id,
-      :user_id => 1
+      :user_id => @user.id
     }
   end
   
@@ -52,16 +52,32 @@ describe WishItem do
     no_url_item.should be_valid
   end
   
-  it "should reject urls that are too long" do
-    long_url = "a" * 2000
+  it "should accept long urls" do
+    long_url = "http://" + ("a" * 1993)
     long_url_item = WishItem.new(@attr.merge(:url => long_url))
     long_url_item.should be_valid
   end
   
   it "should reject urls that are too long" do
-    long_url = "a" * 2001
+    long_url = "http://" + ("a" * 1994)
     long_url_item = WishItem.new(@attr.merge(:url => long_url))
     long_url_item.should_not be_valid
+  end
+
+  it "should accept valid urls" do
+    urls = %w[http://www https://www HTTP://www http://www.com http://www.com/fruit/super%20banana]
+    urls.each do |url|
+      url_item = WishItem.new(@attr.merge(:url => url))
+      url_item.should be_valid
+    end
+  end
+  
+  it "should reject invalid urls" do
+    urls = %w[a http:// http://www<script>]
+    urls.each do |url|
+      url_item = WishItem.new(@attr.merge(:url => url))
+      url_item.should_not be_valid
+    end
   end
 
   it "should require a category_id" do
