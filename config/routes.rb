@@ -1,7 +1,6 @@
 WishList::Application.routes.draw do
 
-  get "users/new"
-
+  resources :users
   resources :wish_items
   
   # The priority is based upon order of creation:
