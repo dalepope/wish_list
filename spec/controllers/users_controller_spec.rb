@@ -94,4 +94,30 @@ describe UsersController do
     end
   end
 
+  describe "GET 'index'" do
+  
+    before(:each) do
+      @users = []
+      30.times do
+        @users << Factory(:user, :email => Factory.next(:email))
+      end
+    end
+      
+    it "should be successful" do
+      get :index
+      response.should be_success
+    end
+    
+    it "should have the right title" do
+      get :index
+      response.should have_selector("title", :content => "Wishers")
+    end
+    
+    it "should have an element for each user" do
+      get :index
+      @users.each do |user|
+        response.should have_selector("li", :content => user.name)
+      end
+    end
+  end
 end
