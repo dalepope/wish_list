@@ -1,4 +1,3 @@
-# By using the symbol ':user', we get Factory Girl to simulate the User model.
 Factory.define :user do |user|
   user.name                  "Dale Pope"
   user.email                 "dpope@example.com"
@@ -12,4 +11,11 @@ end
 
 Factory.define :wish_category do |category|
   category.name "Foo bar"
+end
+
+Factory.define :wish_item do |wish|
+  wish.description "Foo bar"
+  wish.url "http://www.amazon.com/banana"
+  wish.association :category, :factory => :wish_category
+  wish.association :user
 end

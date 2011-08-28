@@ -150,4 +150,39 @@ describe User do
       @user.should be_admin
     end
   end
+
+  describe "wish_item associations" do
+
+    before(:each) do
+      category = Factory(:wish_category, :name => "Book")
+      @user = User.create(@attr)
+      @wish1 = Factory(:wish_item,
+                      :user => @user,
+                      :description => "Foo bar", 
+                      :url => "http://jim.com",
+                      :category => category,
+                      :created_at => 1.day.ago)
+      @wish2 = Factory(:wish_item,
+                      :user => @user,
+                      :description => "Baz quux",
+                      :url => "http://zumbo.com",
+                      :category => category,
+                      :created_at => 1.hour.ago)
+    end
+
+    it "should have a wish_items attribute" do
+      @user.should respond_to(:wish_items)
+    end
+    
+    it "should have the right wish_items in the right order" do
+      @user.wish_items.should == [@wish2, @wish1]
+    end
+    
+    it "should destroy associated wish_items" do
+      @user.destroy
+      [@wish1, @wish2].each do |wish|
+        WishItem.find_by_id(wish.id).should be_nil
+      end
+    end
+  end
 end

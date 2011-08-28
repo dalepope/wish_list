@@ -151,5 +151,22 @@ describe UsersController do
       get :show, :id => @user
       response.should have_selector("h1>img", :class => "gravatar")
     end
+
+    it "should show the user's wishes" do
+      category = Factory(:wish_category, :name => "Book")
+      wish1 = Factory(:wish_item,
+                      :user => @user,
+                      :description => "Foo bar", 
+                      :url => "http://jim.com",
+                      :category => category)
+      wish2 = Factory(:wish_item,
+                      :user => @user,
+                      :description => "Baz quux",
+                      :url => "http://zumbo.com",
+                      :category => category)
+      get :show, :id => @user
+      response.should have_selector("span.description", :content => wish1.description)
+      response.should have_selector("span.description", :content => wish2.description)
+    end
   end
 end

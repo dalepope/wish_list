@@ -1,1 +1,7 @@
 <h1><%= gravatar_for @user %><%= @user.name %></h1>
+
+<% unless @user.wish_items.empty? %>
+  <ul class="wish_items">
+    <%= render @wish_items %>
+  </ul>
+<% end %>

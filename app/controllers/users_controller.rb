@@ -20,6 +20,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @wish_items = @user.wish_items
     @title = @user.name
   end
   

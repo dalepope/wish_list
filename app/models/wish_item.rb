@@ -15,7 +15,9 @@ class WishItem < ActiveRecord::Base
   attr_accessible :description, :url, :category_id, :user_id
 
   belongs_to :user
-  belongs_to :wish_category, :foreign_key => "category_id"
+  belongs_to :category, :class_name => "WishCategory", :foreign_key => "category_id"
+  
+  default_scope :order => 'wish_items.created_at DESC'
 
   url_regex = /\A\z|\Ahttps?:\/\/[^<^>^"^']+\z/i
   
