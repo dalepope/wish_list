@@ -7,7 +7,7 @@ class WishItemsController < ApplicationController
   end
   
   def index
-    @wish_items = WishItem.all
+    @users = User.all
   end
   
 end

@@ -1,9 +1,8 @@
 <h1>Wish Lists</h1>
 
-<ul class="wish_items">
-  <% @wish_items.each do |wish_item| %>
-    <li>
-      <%= wish_item.description %>
-    </li>
-  <% end %>
-</ul>
+<% @users.each do |user| %>
+  <h2><%= user.name %></h2>
+  <ul class="wish_items">
+    <%= render user.wish_items %>
+  </ul>
+<% end %>
