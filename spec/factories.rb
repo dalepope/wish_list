@@ -5,6 +5,10 @@ Factory.define :user do |user|
   user.password_confirmation "foofoobarbar"
 end
 
+Factory.sequence :name do |n|
+  "First Last #{n}"
+end
+
 Factory.sequence :email do |n|
   "person-#{n}@example.com"
 end
@@ -18,4 +22,8 @@ Factory.define :wish_item do |wish|
   wish.url "http://www.amazon.com/banana"
   wish.association :category, :factory => :wish_category
   wish.association :user
+end
+
+Factory.sequence :description do |n|
+  "Thing number #{n}"
 end

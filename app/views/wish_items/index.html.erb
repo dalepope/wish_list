@@ -1,8 +1,12 @@
 <h1>Wish Lists</h1>
 
 <% @users.each do |user| %>
-  <h2><%= user.name %></h2>
+  <h2><%= gravatar_for user, :size => 30 %> <%= user.name %></h2>
   <ul class="wish_items">
-    <%= render user.wish_items %>
+    <% if user.wish_items.count > 0 %>
+      <%= render user.wish_items %>
+    <% else %>
+      <li><%= make_fake_wish %></li>
+    <% end %>
   </ul>
 <% end %>
