@@ -1,1 +1,3 @@
-<li><span class="description"><%= wrap(wish_item.description) %></span></li>
+<li><span class="description">
+  <%= make_wish(wish_item.category.name, wish_item.description, wish_item.url) %>
+</span></li>

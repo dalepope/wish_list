@@ -27,7 +27,7 @@ end
 
 def make_wish_categories
   20.times do |n|
-    name  = "#{Faker::Lorem.words(1)} #{n}".truncate(20)
+    name  = "#{Faker::Lorem.words(1)[0]} #{n}".truncate(20)
     WishCategory.create!(:name => name)
   end
 end

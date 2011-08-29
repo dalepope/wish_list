@@ -165,8 +165,12 @@ describe UsersController do
                       :url => "http://zumbo.com",
                       :category => category)
       get :show, :id => @user
+      response.should have_selector("span.description", :content => wish1.category.name)
       response.should have_selector("span.description", :content => wish1.description)
+      response.should have_selector("a", :href => wish1.url)
+      response.should have_selector("span.description", :content => wish2.category.name)
       response.should have_selector("span.description", :content => wish2.description)
+      response.should have_selector("a", :href => wish1.url)
     end
   end
 end
