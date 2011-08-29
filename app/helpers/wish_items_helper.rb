@@ -1,16 +1,16 @@
 module WishItemsHelper
 
-  def make_wish(category, description, url)
+  def make_wish(wish)
     wish_text = ""
-    unless category.empty?
-      wish_text = category + ": "
+    unless wish.category.none?
+      wish_text = wish.category.name + ": "
     end
-    wish_text += description
+    wish_text += wish.description
     
-    if url.empty?
+    if wish.url.blank?
       wrap(wish_text)
     else
-      link_to(wrap(wish_text), url)
+      link_to(wrap(wish_text), wish.url)
     end
   end
 

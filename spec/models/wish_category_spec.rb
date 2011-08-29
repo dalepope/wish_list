@@ -22,11 +22,6 @@ describe WishCategory do
     WishCategory.create!(@attr)
   end
 
-  it "should require a name" do
-    no_name_category = WishCategory.new(@attr.merge(:name => ""))
-    no_name_category.should_not be_valid
-  end
-
   it "should reject names that are too long" do
     long_name = "a" * 21
     long_name_category = WishCategory.new(@attr.merge(:name => long_name))
@@ -47,4 +42,14 @@ describe WishCategory do
     duplicate_name_category.should_not be_valid
   end
 
+  it "should set none category" do
+    @attr[:name] = ""
+    category = WishCategory.create!(@attr)
+    category.none?.should be_true
+  end
+  
+  it "should not be none when set" do
+    category = WishCategory.new(@attr)
+    category.none?.should be_false
+  end
 end

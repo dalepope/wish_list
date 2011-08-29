@@ -9,6 +9,8 @@
 #
 
 class WishCategory < ActiveRecord::Base
+  NONE = "none"
+
   attr_accessible :name
 
   has_many :wish_items
@@ -16,4 +18,16 @@ class WishCategory < ActiveRecord::Base
   validates :name, :presence => true,
                    :length   => { :maximum => 20 },
                    :uniqueness => { :case_sensitive => false }
+
+  before_validation :ensure_name_has_value
+  
+  def none?
+    name == NONE
+  end
+  
+  private
+  
+    def ensure_name_has_value
+      self.name = NONE if name.blank?
+    end
 end

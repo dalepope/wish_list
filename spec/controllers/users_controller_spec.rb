@@ -167,10 +167,40 @@ describe UsersController do
       get :show, :id => @user
       response.should have_selector("span.description", :content => wish1.category.name)
       response.should have_selector("span.description", :content => wish1.description)
-      response.should have_selector("a", :href => wish1.url)
+      response.should have_selector("a", :href => wish1.url, :content => wish1.description)
       response.should have_selector("span.description", :content => wish2.category.name)
       response.should have_selector("span.description", :content => wish2.description)
-      response.should have_selector("a", :href => wish1.url)
+      response.should have_selector("a", :href => wish2.url, :content => wish2.description)
+    end
+    
+    it "should show the user's wishes without urls" do
+      category = Factory(:wish_category, :name => "Book")
+      wish1 = Factory(:wish_item,
+                      :user => @user,
+                      :description => "Foo bar", 
+                      :url => nil,
+                      :category => category)
+      wish2 = Factory(:wish_item,
+                      :user => @user,
+                      :description => "Baz quux",
+                      :url => "",
+                      :category => category)
+      get :show, :id => @user
+      response.should_not have_selector("a", :content => wish1.description)
+      response.should_not have_selector("a", :content => wish2.description)
+    end
+    
+    it "should show the user's wishes with blank categories" do
+      category = Factory(:wish_category, :name => "")
+      wish1 = Factory(:wish_item,
+                      :user => @user,
+                      :description => "Foo bar", 
+                      :url => "http://jim.com",
+                      :category => category)
+      get :show, :id => @user
+      response.should_not have_selector("span.description", :content => wish1.category.name)
+      response.should have_selector("span.description", :content => wish1.description)
+      response.should have_selector("a", :href => wish1.url, :content => wish1.description)
     end
   end
 end
