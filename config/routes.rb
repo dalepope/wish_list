@@ -7,6 +7,8 @@ WishList::Application.routes.draw do
   match '/login', :to => 'sessions#new'
   match '/logout', :to => 'sessions#destroy'
   
+  root :to => 'wish_items#index'
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

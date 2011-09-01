@@ -47,7 +47,7 @@ describe SessionsController do
         @attr = { :email => @user.email, :password => @user.password }
       end
 
-      it "should sign the user in" do
+      it "should log the user in" do
         post :create, :session => @attr
         controller.current_user.should == @user
         controller.should be_logged_in
@@ -57,6 +57,16 @@ describe SessionsController do
         post :create, :session => @attr
         response.should redirect_to(user_path(@user))
       end
+    end
+  end
+  
+  describe "DELETE 'destroy'" do
+
+    it "should log a user out" do
+      test_log_in(Factory(:user))
+      delete :destroy
+      controller.should_not be_logged_in
+      response.should redirect_to(root_path)
     end
   end
 end
