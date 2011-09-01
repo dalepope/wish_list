@@ -76,7 +76,7 @@ module WishItemsHelper
         { :description => "Spam",
           :url => "http://www.spam.com/"
         }
-      ].rand
+      ].sample
     
     if fake_wish[:url].blank?
       wrap(fake_wish[:description])
