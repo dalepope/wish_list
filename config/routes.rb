@@ -1,5 +1,7 @@
 WishList::Application.routes.draw do
 
+  get "pages/admin"
+
   resources :users
   resources :wish_items
   resources :sessions, :only => [:new, :create, :destroy]
