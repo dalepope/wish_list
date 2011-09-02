@@ -1,0 +1,14 @@
+<header>
+  <nav class="round">
+    <ul>
+      <% if !current_page?(root_path) %>
+      <li><%= link_to "Wish Lists", root_path %></li>
+      <% end %>
+      <% if logged_in? %>
+      <li><%= link_to "Log Out", logout_path, :method => :delete %></li>
+      <% else %>
+      <li><%= link_to "Log In", login_path %></li>
+      <% end %>
+    </ul>
+  </nav>
+</header>
