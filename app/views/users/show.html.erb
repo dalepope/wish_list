@@ -1,5 +1,8 @@
 <h1><%= gravatar_for @user %><%= @user.name %></h1>
 
+<% if @user.admin? %>
+  <p>You are an administrator.</p>
+<% end %>
 <% unless @user.wish_items.empty? %>
   <ul class="wish_items">
     <%= render @wish_items %>

@@ -7,11 +7,6 @@ describe "LayoutLinks" do
     response.should have_selector('title', :content => "Wish Lists")
   end
 
-  it "should have a add-user page at '/users/new'" do
-    get '/users/new'
-    response.should have_selector('title', :content => "Add User")
-  end
-  
   describe "when not logged in" do
   
     it "should have a log in link" do
@@ -35,6 +30,23 @@ describe "LayoutLinks" do
       visit root_path
       response.should have_selector("a", :href => logout_path,
                                          :content => "Log Out")
+    end
+  end
+  
+  describe "when logged in admin" do
+  
+    before(:each) do
+      @user = Factory(:user)
+      @user.toggle!(:admin)
+      visit login_path
+      fill_in :email, :with => @user.email
+      fill_in :password, :with => @user.password
+      click_button
+    end
+    
+    it "should have a add-user page at '/users/new'" do
+      get '/users/new'
+      response.should have_selector('title', :content => "Add User")
     end
   end
 end

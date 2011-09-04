@@ -15,7 +15,7 @@
 require 'digest'
 
 class User < ActiveRecord::Base
-  attr_accessor :password
+  attr_accessor :password, :accessible
   attr_accessible :name, :email, :password, :password_confirmation
 
   has_many :wish_items, :dependent => :destroy
@@ -38,6 +38,14 @@ class User < ActiveRecord::Base
   # Return true if the user's password matches the submitted password.
   def has_password?(submitted_password)
     encrypted_password == encrypt(submitted_password)
+  end
+  
+  def is_admin=(v)
+    self.admin = v
+  end
+  
+  def is_admin
+    self.admin
   end
   
   def self.authenticate(email, submitted_password)
@@ -68,5 +76,9 @@ class User < ActiveRecord::Base
     
     def secure_hash(string)
       Digest::SHA2.hexdigest(string)
+    end
+    
+    def mass_assignment_authorizer
+      super + (accessible || [])
     end
 end

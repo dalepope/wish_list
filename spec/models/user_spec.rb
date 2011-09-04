@@ -151,7 +151,7 @@ describe User do
   describe "admin attribute" do
 
     before(:each) do
-      @user = User.create!(@attr)
+      @user = User.create!(@attr.merge(:admin => true))
     end
 
     it "should respond to admin" do

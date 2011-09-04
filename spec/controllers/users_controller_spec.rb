@@ -5,47 +5,95 @@ describe UsersController do
 
   describe "GET 'new'" do
   
-    it "should be successful" do
-      get :new
-      response.should be_success
-    end
-    
-    it "should have the right title" do
-      get :new
-      response.should have_selector("title", :content => "Add User")
-    end
-    
-    it "should have a name field" do
-      get :new
-      response.should have_selector("input[name='user[name]'][type='text']")
+    describe "for non-logged-in users" do
+      it "should deny access" do
+        get :new
+        response.should redirect_to(login_path)
+        flash[:notice].should =~ /log in/i
+      end
     end
 
-    it "should have an email field" do
-      get :new
-      response.should have_selector("input[name='user[email]'][type='text']")
+    describe "for logged-in non-admins" do
+      it "should deny access" do
+        @user = test_log_in(Factory(:user))
+        get :new
+        response.should redirect_to(root_path)
+        flash[:error].should =~ /do not have permission/i
+      end
     end
     
-    it "should have a password field" do
-      get :new
-      response.should have_selector("input[name='user[password]'][type='password']")
-    end
-    
-    it "should have a password confirmation field" do
-      get :new
-      response.should have_selector("input[name='user[password_confirmation]'][type='password']")
-    end
-    
-    it "should have an admin checkbox" do
-      get :new
-      response.should have_selector("input[name='user[admin]'][type='checkbox']")
+    describe "for logged-in admins" do
+
+      before(:each) do
+        @user = test_log_in(Factory(:user))
+        @user.toggle!(:admin)
+      end
+
+      it "should be successful" do
+        get :new
+        response.should be_success
+      end
+      
+      it "should have the right title" do
+        get :new
+        response.should have_selector("title", :content => "Add User")
+      end
+      
+      it "should have a name field" do
+        get :new
+        response.should have_selector("input[name='user[name]'][type='text']")
+      end
+
+      it "should have an email field" do
+        get :new
+        response.should have_selector("input[name='user[email]'][type='text']")
+      end
+      
+      it "should have a password field" do
+        get :new
+        response.should have_selector("input[name='user[password]'][type='password']")
+      end
+      
+      it "should have a password confirmation field" do
+        get :new
+        response.should have_selector("input[name='user[password_confirmation]'][type='password']")
+      end
+      
+      it "should have an admin checkbox" do
+        get :new
+        response.should have_selector("input[name='user[admin]'][type='checkbox']")
+      end
     end
   end
   
   describe "POST 'create'" do
+
+    describe "authentication" do
+
+      before(:each) do
+        @user = Factory(:user)
+        @attr = { :name => "New User", :email => "user@example.com",
+                  :password => "foofoobarbar", :password_confirmation => "foofoobarbar" }
+      end
+
+      it "should deny access when not logged in" do
+        post :create, :user => @attr
+        response.should redirect_to(login_path)
+      end
+      
+      it "should deny access when logged in as non-admin" do
+        test_log_in(@user)
+        post :create, :user => @attr
+        response.should redirect_to(root_path)
+      end
+    end
   
     describe "failure" do
 
       before(:each) do
+        @user = Factory(:user)
+        @user.admin = true
+        test_log_in(@user)
         @attr = { :name => "", :email => "", :password => "",
                   :password_confirmation => "" }
       end
@@ -77,6 +125,9 @@ describe UsersController do
     describe "success" do
 
       before(:each) do
+        @user = Factory(:user)
+        @user.admin = true
+        test_log_in(@user)
         @attr = { :name => "New User", :email => "user@example.com",
                   :password => "foofoobarbar", :password_confirmation => "foofoobarbar" }
       end
