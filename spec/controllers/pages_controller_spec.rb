@@ -5,19 +5,44 @@ describe PagesController do
 
   describe "GET 'admin'" do
   
-    it "should be successful" do
-      get :admin
-      response.should be_success
+    describe "for non-logged-in users" do
+      it "should deny access" do
+        get :admin
+        response.should redirect_to(login_path)
+        flash[:notice].should =~ /log in/i
+      end
     end
     
-    it "should have the right title" do
-      get :admin
-      response.should have_selector("title", :content => "Administration")
+    describe "for logged-in non-admins" do
+      it "should deny access" do
+        @user = test_log_in(Factory(:user))
+        get :admin
+        response.should redirect_to(root_path)
+        flash[:error].should =~ /do not have permission/i
+      end
     end
     
-    it "should have an add user link" do
-      get :admin
-      response.should have_selector("a", :href => new_user_path, :content => "Add a user")
+    describe "for logged-in admins" do
+
+      before(:each) do
+        @user = test_log_in(Factory(:user))
+        @user.toggle!(:admin)
+      end
+      
+      it "should be successful" do
+        get :admin
+        response.should be_success
+      end
+      
+      it "should have the right title" do
+        get :admin
+        response.should have_selector("title", :content => "Administration")
+      end
+      
+      it "should have an add user link" do
+        get :admin
+        response.should have_selector("a", :href => new_user_path, :content => "Add a user")
+      end
     end
   end
 
