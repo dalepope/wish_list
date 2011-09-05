@@ -1,5 +1,38 @@
-<h1>Wish Lists</h1>
+<% if logged_in? %>
+  <h1 class="wish_item">What do you want?</h1>
+  <%= form_for @wish_item do |f| %>
+    <%= render 'shared/error_messages', :object => f.object %>
+    <table>
+      <tr>
+        <td>Category</td>
+        <td>Description</td>
+        <td>Link</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="field">
+            <%= f.select :category_id, @categories.map { |c| [c.name, c.id] } %>
+          </div>
+        </td>
+        <td>
+          <div class="field">
+            <%= f.text_area :description %>
+          </div>
+        </td>
+        <td>
+          <div class="field">
+            <%= f.text_field :url %>
+          </div>
+        </td>
+      </tr>
+    </table
+    <div class="actions">
+      <%= f.submit "Submit" %>
+    </div>
+  <% end %>
+<% end %>
 
+<h1>Wish Lists</h1>
 <% @users.each do |user| %>
   <h2><%= gravatar_for user, :size => 30 %> <%= user.name %></h2>
   <ul class="wish_items">

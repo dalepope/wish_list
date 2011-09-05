@@ -11,7 +11,6 @@ class UsersController < ApplicationController
     @user = User.new
     @user.accessible = [:admin] if current_user.admin?
     @user.update_attributes(params[:user])
-    # @user = User.new(params[:user])
     if @user.save
       flash[:success] = "Added user #{@user.name}"
       redirect_to users_path
@@ -26,6 +25,8 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     @wish_items = @user.wish_items
+    @wish_item = WishItem.new
+    @categories = WishCategory.all
     @title = @user.name
   end
   

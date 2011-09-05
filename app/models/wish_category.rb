@@ -15,6 +15,8 @@ class WishCategory < ActiveRecord::Base
 
   has_many :wish_items
   
+  default_scope :order => 'wish_categories.name ASC'
+  
   validates :name, :presence => true,
                    :length   => { :maximum => 20 },
                    :uniqueness => { :case_sensitive => false }
