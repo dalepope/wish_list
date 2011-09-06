@@ -1,24 +1,21 @@
+<table class="front">
+<tr>
+<td>
 <% if logged_in? %>
   <h1 class="wish_item">What do you want?</h1>
   <%= form_for @wish_item do |f| %>
     <%= render 'shared/error_messages', :object => f.object %>
     <table>
       <tr>
-        <td>Category</td>
-        <td>Description</td>
-        <td>Link</td>
-      </tr>
-      <tr>
-        <td>
-          <div class="field">
-            <%= f.select :category_id, @categories.map { |c| [c.name, c.id] } %>
-          </div>
-        </td>
+        <td>Wish #<%= current_user.wish_items.count + 1 %></td>
         <td>
           <div class="field">
             <%= f.text_area :description %>
           </div>
         </td>
+      </tr>
+      <tr>
+        <td>Link</td>
         <td>
           <div class="field">
             <%= f.text_field :url %>
@@ -31,7 +28,10 @@
     </div>
   <% end %>
 <% end %>
-
+</td>
+</tr>
+<tr>
+<td class="wish_lists">
 <h1>Wish Lists</h1>
 <% @users.each do |user| %>
   <h2><%= gravatar_for user, :size => 30 %> <%= user.name %></h2>
@@ -43,3 +43,6 @@
     <% end %>
   </ul>
 <% end %>
+</td>
+</tr>
+</table>

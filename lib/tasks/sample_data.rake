@@ -26,10 +26,7 @@ def make_users
 end
 
 def make_wish_categories
-  20.times do |n|
-    name  = "#{Faker::Lorem.words(1)[0]} #{n}".truncate(20)
-    WishCategory.create!(:name => name)
-  end
+  WishCategory.create!(:name => "none")
 end
 
 def make_wish_items
@@ -38,12 +35,11 @@ def make_wish_items
     10.times do |i|
       description = Faker::Lorem.sentence(5)
       url = "http://#{Faker::Internet.domain_name}"
-      category = categories.rand
+      category = categories[0]
       WishItem.create!(:description => description,
                        :url => url,
                        :category_id => category.id,
                        :user_id => user.id)
-      # user.microposts.create!(:content => content)
     end
   end
 end
