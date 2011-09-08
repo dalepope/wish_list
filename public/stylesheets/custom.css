@@ -212,12 +212,34 @@ form.new_wish_item {
   margin-bottom: 2em;
 }
 
-form.new_wish_item textarea {
+form.new_wish_item table {
+  margin-bottom: 10px;
+}
+
+form.new_wish_item table tr {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+form.new_wish_item table tr td {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+form.new_wish_item div.field {
+  margin-bottom: 0px;
+}
+
+form.new_wish_item div.field textarea {
   height: 4em;
+  width: 560px;
   margin-bottom: 0;
 }
 
-form.new_wish_item textarea {
-  height: 4em;
-  margin-bottom: 0;
+form.new_wish_item div.field input {
+  width: 560px;
+}
+
+form.new_wish_item input#wish_item_submit {
+  margin-top: 0;
 }

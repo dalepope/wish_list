@@ -7,7 +7,7 @@
     <%= render 'shared/error_messages', :object => f.object %>
     <table>
       <tr>
-        <td>Wish #<%= current_user.wish_items.count + 1 %></td>
+        <td>Wish #<%= current_user.wish_items.count + 1 %><br/>Description</td>
         <td>
           <div class="field">
             <%= f.text_area :description %>
