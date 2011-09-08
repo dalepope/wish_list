@@ -9,7 +9,7 @@ class WishItemsController < ApplicationController
       flash[:success] = "Added wish"
       redirect_to root_path
     else
-      @users = User.all
+      get_users
       render 'wish_items/index'
     end
   end
@@ -18,7 +18,7 @@ class WishItemsController < ApplicationController
   end
   
   def index
-    @users = User.all
+    get_users
     if logged_in?
       @wish_item = WishItem.new
       if WishCategory.all.count == 0
@@ -26,5 +26,14 @@ class WishItemsController < ApplicationController
       end
     end
   end
+
+  private
   
+    def get_users
+      @users = User.all
+      if logged_in?
+        current_user_index = @users.index { |i| i.id == current_user.id }
+        @users.unshift(@users.slice!(current_user_index))
+      end
+    end
 end
