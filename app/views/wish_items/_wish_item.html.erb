@@ -1,3 +1,11 @@
-<li><span class="description">
-  <%= make_wish(wish_item) %>
-</span></li>
+<li>
+  <span class="description">
+    <%= make_wish(wish_item) %>
+  </span>
+  <% if current_user?(wish_item.user) %>
+    <%= link_to "delete", wish_item, :method => :delete,
+                                     :confirm => "You sure?",
+                                     :title => wish_item.description %> 
+  <% end %>
+
+</li>

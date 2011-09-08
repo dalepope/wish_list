@@ -1,5 +1,6 @@
 class WishItemsController < ApplicationController
   before_filter :authenticate, :only => [:create, :destroy]
+  before_filter :authorized_user, :only => :destroy
 
   def create
     @wish_item = current_user.wish_items.build(params[:wish_item])
@@ -15,6 +16,8 @@ class WishItemsController < ApplicationController
   end
 
   def destroy
+    @wish_item.destroy
+    redirect_back_or root_path
   end
   
   def index
@@ -36,4 +39,10 @@ class WishItemsController < ApplicationController
         @users.unshift(@users.slice!(current_user_index))
       end
     end
+    
+    def authorized_user
+      @wish_item = current_user.wish_items.find_by_id(params[:id])
+      redirect_to root_path if @wish_item.nil?
+    end
+
 end
