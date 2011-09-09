@@ -4,6 +4,7 @@ class WishItemsController < ApplicationController
 
   def create
     @wish_item = current_user.wish_items.build(params[:wish_item])
+    @wish_item.description.gsub!(/\n/, "<br/>")
     category = WishCategory.first
     @wish_item.category_id = category.id
     if @wish_item.save

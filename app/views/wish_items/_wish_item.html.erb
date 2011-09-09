@@ -3,8 +3,9 @@
     <%= make_wish(wish_item) %>
   </span>
   <% if current_user?(wish_item.user) %>
+    -
     <%= link_to "delete", wish_item, :method => :delete,
-                                     :confirm => "You sure?",
+                                     :confirm => "Are you sure you want to delete the wish?",
                                      :title => wish_item.description %> 
   <% end %>
 

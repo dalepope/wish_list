@@ -86,7 +86,8 @@ module WishItemsHelper
   end
   
   def wrap(content)
-    sanitize(raw(content.split.map{ |s| wrap_long_string(s) }.join(' ')))
+    tags = %w(a b strong em br sub sup)
+    sanitize(raw(content.split.map{ |s| wrap_long_string(s) }.join(' ')), :tags => tags, :attributes => %w(href))
   end
 
   private
