@@ -1,9 +1,13 @@
 <h1><%= gravatar_for @user %><%= @user.name %></h1>
 
 <% if @user.admin? %>
-  <p>You are an administrator.</p>
+  <p>Administrator</p>
 <% end %>
+<div>
+  <p><a href="http://gravatar.com/emails" target="_blank">Change image (gravatar)</a></p>
+</div>
 <% unless @user.wish_items.empty? %>
+  <h3>Wish List</h3>
   <ul class="wish_items">
     <%= render @wish_items %>
   </ul>

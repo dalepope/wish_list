@@ -29,6 +29,7 @@ class UsersController < ApplicationController
     @wish_item = WishItem.new
     @categories = WishCategory.all
     @title = @user.name
+    store_location
   end
   
   def edit

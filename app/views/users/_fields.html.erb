@@ -14,15 +14,15 @@
 <% unless current_user.admin? %>
   <div class="field">
     <%= label_tag :old_password, "Current password" %><br />
-    <%= password_field_tag :old_password %>
+    <%= password_field_tag :old_password, nil, :size => 30 %>
   </div>
 <% end %>
 <div class="field">
-  <%= f.label :password %><br />
+  <%= f.label :password, "New password" %><br />
   <%= f.password_field :password %>
 </div>
 <div class="field">
-  <%= f.label :password_confirmation %><br />
+  <%= f.label :password_confirmation, "New password confirmation" %><br />
   <%= f.password_field :password_confirmation %>
 </div>
 <% if current_user.admin? %>
