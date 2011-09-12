@@ -103,6 +103,20 @@ describe User do
       hash = @attr.merge(:password => long, :password_confirmation => long)
       User.new(hash).should_not be_valid
     end
+
+    it "should not reject blank passwords when encrypted password is set" do
+      user = User.create!(@attr)
+      hash = @attr.merge(:password => "", :password_confirmation => "")
+      user.update_attributes!(hash)
+      user.should be_valid
+    end
+    
+    it "should reject blank passwords when confirmation does not match" do
+      user = User.create!(@attr)
+      hash = @attr.merge(:password => "", :password_confirmation => "invalid")
+      user.update_attributes(hash)
+      user.should_not be_valid
+    end
   end
   
   describe "password encryption" do

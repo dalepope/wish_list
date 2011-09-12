@@ -33,6 +33,7 @@ class User < ActiveRecord::Base
                        :confirmation => true,
                        :length => { :within => 12..40 }
 
+  before_validation :update_password
   before_save :encrypt_password
 
   # Return true if the user's password matches the submitted password.
@@ -62,8 +63,10 @@ class User < ActiveRecord::Base
   private
   
     def encrypt_password
-      self.salt = make_salt if new_record?
-      self.encrypted_password = encrypt(password)
+      if encrypted_password.blank? || password != encrypted_password[0..39]
+        self.salt = make_salt if new_record?
+        self.encrypted_password = encrypt(password)
+      end
     end
     
     def encrypt(string)
@@ -80,5 +83,14 @@ class User < ActiveRecord::Base
     
     def mass_assignment_authorizer
       super + (accessible || [])
+    end
+    
+    def update_password
+      if password.blank? && !encrypted_password.blank?
+        self.password = encrypted_password[0..39]
+        if password_confirmation.blank?
+          self.password_confirmation = password
+        end
+      end
     end
 end

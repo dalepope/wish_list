@@ -216,10 +216,8 @@ describe UsersController do
                       :url => "http://zumbo.com",
                       :category => category)
       get :show, :id => @user
-      response.should have_selector("span.description", :content => wish1.category.name)
       response.should have_selector("span.description", :content => wish1.description)
       response.should have_selector("a", :href => wish1.url, :content => wish1.description)
-      response.should have_selector("span.description", :content => wish2.category.name)
       response.should have_selector("span.description", :content => wish2.description)
       response.should have_selector("a", :href => wish2.url, :content => wish2.description)
     end
@@ -252,6 +250,212 @@ describe UsersController do
       response.should_not have_selector("span.description", :content => wish1.category.name)
       response.should have_selector("span.description", :content => wish1.description)
       response.should have_selector("a", :href => wish1.url, :content => wish1.description)
+    end
+  end
+
+  describe "GET 'edit'" do
+
+    before(:each) do
+      @user = Factory(:user)
+      test_log_in(@user)
+    end
+
+    describe "for logged in non-admins" do
+    
+      it "should be successful" do
+        get :edit, :id => @user
+        response.should be_success
+      end
+
+      it "should have the right title" do
+        get :edit, :id => @user
+        response.should have_selector("title", :content => "Edit Account")
+      end
+      
+      it "should not have the name field" do
+        get :edit, :id => @user
+        response.should_not have_selector("input[name='user[name]'][type='text']")
+      end
+      
+      it "should show the name" do
+        get :edit, :id => @user
+        response.should have_selector("h3", :content => @user.name)
+      end
+      
+      it "should have an old password field" do
+        get :edit, :id => @user
+        response.should have_selector("input[name='old_password'][type='password']")
+      end
+
+      it "should not have an admin checkbox" do
+        get :edit, :id => @user
+        response.should_not have_selector("input[name='user[admin]'][type='checkbox']")
+      end
+    end
+    
+    describe "for logged in admins" do
+
+      before(:each) do
+        @user.toggle!(:admin)
+      end
+      
+      it "should be successful" do
+        get :edit, :id => @user
+        response.should be_success
+      end
+
+      it "should have the right title" do
+        get :edit, :id => @user
+        response.should have_selector("title", :content => "Edit Account")
+      end
+
+      it "should have the name field" do
+        get :edit, :id => @user
+        response.should have_selector("input[name='user[name]'][type='text']")
+      end
+      
+      it "should not have an old password field" do
+        get :edit, :id => @user
+        response.should_not have_selector("input[name='old_password'][type='password']")
+      end
+      
+      it "should have an admin checkbox" do
+        get :edit, :id => @user
+        response.should have_selector("input[name='user[admin]'][type='checkbox']")
+      end
+    end
+  end
+  
+  describe "PUT 'update'" do
+
+    before(:each) do
+      @user = Factory(:user)
+      test_log_in(@user)
+    end
+
+    describe "failure" do
+
+      before(:each) do
+        @attr = { :email => "", :name => "", :password => "",
+                  :password_confirmation => "" }
+      end
+
+      it "should render the 'edit' page" do
+        put :update, :id => @user, :user => @attr
+        response.should render_template('edit')
+      end
+
+      it "should have the right title" do
+        put :update, :id => @user, :user => @attr
+        response.should have_selector("title", :content => "Edit Account")
+      end
+    end
+
+    describe "success" do
+
+      before(:each) do
+        @attr = { :name => "New Name", :email => "user@example.org",
+                  :password => "barbarbazbaz", :password_confirmation => "barbarbazbaz" }
+        @old_password = @user.password
+      end
+
+      it "should change the user's attributes" do
+        put :update, :id => @user, :user => @attr, :old_password => @old_password
+        @user.reload
+        @user.name.should  == @attr[:name]
+        @user.email.should == @attr[:email]
+      end
+
+      it "should change the user's attributes without new password" do
+        @attr.merge({ :password => "", :password_confirmation => "" })
+        put :update, :id => @user, :user => @attr, :old_password => @old_password
+        @user.reload
+        @user.name.should  == @attr[:name]
+        @user.email.should == @attr[:email]
+      end
+      
+      it "should redirect to the user show page" do
+        put :update, :id => @user, :user => @attr, :old_password => @old_password
+        response.should redirect_to(user_path(@user))
+      end
+
+      it "should have a flash message" do
+        put :update, :id => @user, :user => @attr, :old_password => @old_password
+        flash[:success].should =~ /updated/
+      end
+    end
+  end
+  
+  describe "authentication of edit/update pages" do
+
+    before(:each) do
+      @user = Factory(:user)
+    end
+
+    describe "for non-logged-in users" do
+
+      it "should deny access to 'edit'" do
+        get :edit, :id => @user
+        response.should redirect_to(login_path)
+      end
+
+      it "should deny access to 'update'" do
+        put :update, :id => @user, :user => {}
+        response.should redirect_to(login_path)
+      end
+    end
+    
+    describe "for logged-in non-admins" do
+
+      describe "editing the wrong user" do
+      
+        before(:each) do
+          wrong_user = Factory(:user, :email => "user@example.net")
+          test_log_in(wrong_user)
+        end
+
+        it "should require matching users for 'edit'" do
+          get :edit, :id => @user
+          response.should redirect_to(root_path)
+        end
+
+        it "should require matching users for 'update'" do
+          put :update, :id => @user, :user => {}
+          response.should redirect_to(root_path)
+        end
+      end
+      
+      describe "editing themselves" do
+      
+        it "should require current password" do
+          test_log_in(@user)
+          put :update, :id => @user, :user => @attr, :old_password => "wrong"
+          flash[:error].should =~ /does not match/
+        end
+      end
+    end
+    
+    describe "for logged-in admins" do
+
+      before(:each) do
+        admin_user = Factory(:user, :email => "user@example.net")
+        test_log_in(admin_user)
+        admin_user.toggle!(:admin)
+      end
+
+      it "should 'edit' any user" do
+        get :edit, :id => @user
+        response.should be_success
+      end
+
+      it "should 'update' any user" do
+        @attr = { :name => "New Name", :email => "user@example.org",
+                  :password => "barbarbazbaz", :password_confirmation => "barbarbazbaz" }
+        put :update, :id => @user, :user => @attr
+        @user.reload
+        @user.name.should  == @attr[:name]
+        @user.email.should == @attr[:email]
+      end
     end
   end
 end

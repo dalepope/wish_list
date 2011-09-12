@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_filter :authenticate, :except => [:show, :index]
+  before_filter :correct_user, :only => [:edit, :update]
   before_filter :admin_user, :only => [:new, :create]
 
   def new
@@ -30,6 +31,25 @@ class UsersController < ApplicationController
     @title = @user.name
   end
   
+  def edit
+    @title = "Edit Account"
+  end
+  
+  def update
+    unless current_user.has_password?(params[:old_password]) || current_user.admin?
+      flash.now[:error] = "Current password entered does not match your actual password."
+      @title = "Edit Account"
+      return render 'edit'
+    end
+    if @user.update_attributes(params[:user])
+      flash[:success] = "Account updated."
+      redirect_to @user
+    else
+      @title = "Edit Account"
+      render 'edit'
+    end
+  end
+  
   def index
     @users = User.all
     @title = "Wishers"
@@ -42,5 +62,10 @@ class UsersController < ApplicationController
         flash[:error] = "You do not have permission to #{request.fullpath}."
         redirect_to(root_path)
       end
+    end
+    
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_path) unless current_user?(@user) || current_user.admin?
     end
 end

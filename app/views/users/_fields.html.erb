@@ -1,0 +1,32 @@
+<%= render 'shared/error_messages', :object => f.object %>
+<% if current_user.admin? %>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+<% else %>
+  <h3><%= @user.name %></h3>
+<% end %>
+<div class="field">
+  <%= f.label :email %><br />
+  <%= f.text_field :email %>
+</div>
+<% unless current_user.admin? %>
+  <div class="field">
+    <%= label_tag :old_password, "Current password" %><br />
+    <%= password_field_tag :old_password %>
+  </div>
+<% end %>
+<div class="field">
+  <%= f.label :password %><br />
+  <%= f.password_field :password %>
+</div>
+<div class="field">
+  <%= f.label :password_confirmation %><br />
+  <%= f.password_field :password_confirmation %>
+</div>
+<% if current_user.admin? %>
+  <div class="field">
+    <%= f.check_box :admin %><%= f.label :admin %>
+  </div>
+<% end %>
