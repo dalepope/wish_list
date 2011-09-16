@@ -1,14 +1,30 @@
 <h1><%= gravatar_for @user %><%= @user.name %></h1>
 
-<% if @user.admin? %>
-  <p>Administrator</p>
+<% if current_user?(@user) %>
+  <% if @user.admin? %>
+    <p>Administrator</p>
+  <% end %>
+  <div>
+    <p><a href="http://gravatar.com/emails" target="_blank">Change image (gravatar)</a></p>
+  </div>
+  <table class="front">
+    <tr>
+      <td>
+        <h3 class="wish_item">Add a wish to your wish list:</h3>
+        <%= render 'wish_items/wish_item_form' %>
+      </td>
+    </tr>
+  </table>
 <% end %>
-<div>
-  <p><a href="http://gravatar.com/emails" target="_blank">Change image (gravatar)</a></p>
-</div>
 <% unless @user.wish_items.empty? %>
-  <h3>Wish List</h3>
-  <ul class="wish_items">
-    <%= render @wish_items %>
-  </ul>
+  <table class="front">
+    <tr>
+      <td class="wish_lists">
+        <h3>Wish List</h3>
+        <ul class="wish_items">
+          <%= render @wish_items %>
+        </ul>
+      </td>
+    </tr>
+  </table>
 <% end %>

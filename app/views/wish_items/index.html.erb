@@ -1,48 +1,25 @@
 <table class="front">
-<tr>
-<td>
-<% if logged_in? %>
-  <h1 class="wish_item">What do you want?</h1>
-  <%= form_for @wish_item do |f| %>
-    <%= render 'shared/error_messages', :object => f.object %>
-    <table>
-      <tr>
-        <td>Wish #<%= current_user.wish_items.count + 1 %><br/>Description</td>
-        <td>
-          <div class="field">
-            <%= f.text_area :description %>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>Link</td>
-        <td>
-          <div class="field">
-            <%= f.text_field :url %>
-          </div>
-        </td>
-      </tr>
-    </table
-    <div class="actions">
-      <%= f.submit "Submit" %>
-    </div>
+  <% if logged_in? %>
+    <tr>
+      <td>
+        <h1 class="wish_item">What do you want?</h1>
+        <%= render 'wish_item_form' %>
+      </td>
+    </tr>
   <% end %>
-<% end %>
-</td>
-</tr>
-<tr>
-<td class="wish_lists">
-<h1>Wish Lists</h1>
-<% @users.each do |user| %>
-  <h2><%= gravatar_for user, :size => 30 %> <%= user.name %></h2>
-  <ul class="wish_items">
-    <% if user.wish_items.count > 0 %>
-      <%= render user.wish_items %>
-    <% else %>
-      <li><%= make_fake_wish %></li>
+  <tr>
+    <td class="wish_lists">
+    <h1>Wish Lists</h1>
+    <% @users.each do |user| %>
+      <h2><%= gravatar_for user, :size => 30 %> <%= link_to user.name, user %></h2>
+      <ul class="wish_items">
+        <% if user.wish_items.count > 0 %>
+          <%= render user.wish_items %>
+        <% else %>
+          <li><%= make_fake_wish %></li>
+        <% end %>
+      </ul>
     <% end %>
-  </ul>
-<% end %>
-</td>
-</tr>
+    </td>
+  </tr>
 </table>

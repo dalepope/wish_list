@@ -1,0 +1,10 @@
+<table class="front">
+  <% if logged_in? %>
+    <tr>
+      <td>
+        <h3 class="wish_item">Add an item to your wish list:</h3>
+        <%= render 'wish_item_form' %>
+      </td>
+    </tr>
+  <% end %>
+</table>

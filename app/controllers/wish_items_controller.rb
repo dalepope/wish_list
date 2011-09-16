@@ -12,10 +12,10 @@ class WishItemsController < ApplicationController
     @wish_item.category_id = category.id
     if @wish_item.save
       flash[:success] = "Added wish"
-      redirect_to root_path
+      redirect_back_or root_path
     else
       get_users
-      render 'wish_items/index'
+      render 'wish_items/bare_wish_item_form'
     end
   end
 
@@ -29,6 +29,7 @@ class WishItemsController < ApplicationController
     if logged_in?
       @wish_item = WishItem.new
     end
+    store_location
   end
 
   private

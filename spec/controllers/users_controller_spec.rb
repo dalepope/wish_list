@@ -178,78 +178,214 @@ describe UsersController do
       @user = Factory(:user)
     end
 
-    it "should be successful" do
-      get :show, :id => @user
-      response.should be_success
-    end
+    describe "for non-logged in users" do
+    
+      it "should be successful" do
+        get :show, :id => @user
+        response.should be_success
+      end
 
-    it "should find the right user" do
-      get :show, :id => @user
-      assigns(:user).should == @user
+      it "should find the right user" do
+        get :show, :id => @user
+        assigns(:user).should == @user
+      end
+      
+      it "should have the right title" do
+        get :show, :id => @user
+        response.should have_selector("title", :content => @user.name)
+      end
+
+      it "should include the user's name" do
+        get :show, :id => @user
+        response.should have_selector("h1", :content => @user.name)
+      end
+
+      it "should have a profile image" do
+        get :show, :id => @user
+        response.should have_selector("h1>img", :class => "gravatar")
+      end
+      
+      it "should not show the link to change profile image" do
+        get :show, :id => @user
+        response.should_not have_selector("a", :content => "Change image")
+      end
+
+      it "should not show the wish item form" do
+        get :show, :id => @user
+        response.should_not have_selector("td", :content => "Description")
+      end
+
+      it "should show the user's wishes" do
+        category = Factory(:wish_category, :name => "Book")
+        wish1 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Foo bar", 
+                        :url => "http://jim.com",
+                        :category => category)
+        wish2 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Baz quux",
+                        :url => "http://zumbo.com",
+                        :category => category)
+        get :show, :id => @user
+        response.should have_selector("span.description", :content => wish1.description)
+        response.should have_selector("a", :href => wish1.url, :content => wish1.description)
+        response.should have_selector("span.description", :content => wish2.description)
+        response.should have_selector("a", :href => wish2.url, :content => wish2.description)
+      end
+      
+      it "should show the user's wishes without urls" do
+        category = Factory(:wish_category, :name => "Book")
+        wish1 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Foo bar", 
+                        :url => nil,
+                        :category => category)
+        wish2 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Baz quux",
+                        :url => "",
+                        :category => category)
+        get :show, :id => @user
+        response.should_not have_selector("a", :content => wish1.description)
+        response.should_not have_selector("a", :content => wish2.description)
+      end
+      
+      it "should show the user's wishes with blank categories" do
+        category = Factory(:wish_category, :name => "")
+        wish1 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Foo bar", 
+                        :url => "http://jim.com",
+                        :category => category)
+        get :show, :id => @user
+        response.should_not have_selector("span.description", :content => wish1.category.name)
+        response.should have_selector("span.description", :content => wish1.description)
+        response.should have_selector("a", :href => wish1.url, :content => wish1.description)
+      end
     end
     
-    it "should have the right title" do
-      get :show, :id => @user
-      response.should have_selector("title", :content => @user.name)
-    end
+    describe "for own logged-in user" do
+    
+      before(:each) do
+        test_log_in(@user)
+      end
+    
+      it "should be successful" do
+        get :show, :id => @user
+        response.should be_success
+      end
 
-    it "should include the user's name" do
-      get :show, :id => @user
-      response.should have_selector("h1", :content => @user.name)
-    end
+      it "should find the right user" do
+        get :show, :id => @user
+        assigns(:user).should == @user
+      end
+      
+      it "should have the right title" do
+        get :show, :id => @user
+        response.should have_selector("title", :content => @user.name)
+      end
 
-    it "should have a profile image" do
-      get :show, :id => @user
-      response.should have_selector("h1>img", :class => "gravatar")
-    end
+      it "should include the user's name" do
+        get :show, :id => @user
+        response.should have_selector("h1", :content => @user.name)
+      end
 
-    it "should show the user's wishes" do
-      category = Factory(:wish_category, :name => "Book")
-      wish1 = Factory(:wish_item,
-                      :user => @user,
-                      :description => "Foo bar", 
-                      :url => "http://jim.com",
-                      :category => category)
-      wish2 = Factory(:wish_item,
-                      :user => @user,
-                      :description => "Baz quux",
-                      :url => "http://zumbo.com",
-                      :category => category)
-      get :show, :id => @user
-      response.should have_selector("span.description", :content => wish1.description)
-      response.should have_selector("a", :href => wish1.url, :content => wish1.description)
-      response.should have_selector("span.description", :content => wish2.description)
-      response.should have_selector("a", :href => wish2.url, :content => wish2.description)
+      it "should have a profile image" do
+        get :show, :id => @user
+        response.should have_selector("h1>img", :class => "gravatar")
+      end
+      
+      it "should show the link to change profile image" do
+        get :show, :id => @user
+        response.should have_selector("a", :content => "Change image")
+      end
+
+      it "should show the wish item form" do
+        get :show, :id => @user
+        response.should have_selector("td", :content => "Description")
+      end
+
+      it "should show the user's wishes" do
+        category = Factory(:wish_category, :name => "Book")
+        wish1 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Foo bar", 
+                        :url => "http://jim.com",
+                        :category => category)
+        wish2 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Baz quux",
+                        :url => "http://zumbo.com",
+                        :category => category)
+        get :show, :id => @user
+        response.should have_selector("span.description", :content => wish1.description)
+        response.should have_selector("a", :href => wish1.url, :content => wish1.description)
+        response.should have_selector("span.description", :content => wish2.description)
+        response.should have_selector("a", :href => wish2.url, :content => wish2.description)
+      end
     end
     
-    it "should show the user's wishes without urls" do
-      category = Factory(:wish_category, :name => "Book")
-      wish1 = Factory(:wish_item,
-                      :user => @user,
-                      :description => "Foo bar", 
-                      :url => nil,
-                      :category => category)
-      wish2 = Factory(:wish_item,
-                      :user => @user,
-                      :description => "Baz quux",
-                      :url => "",
-                      :category => category)
-      get :show, :id => @user
-      response.should_not have_selector("a", :content => wish1.description)
-      response.should_not have_selector("a", :content => wish2.description)
-    end
+    describe "for logged in users viewing others" do
     
-    it "should show the user's wishes with blank categories" do
-      category = Factory(:wish_category, :name => "")
-      wish1 = Factory(:wish_item,
-                      :user => @user,
-                      :description => "Foo bar", 
-                      :url => "http://jim.com",
-                      :category => category)
-      get :show, :id => @user
-      response.should_not have_selector("span.description", :content => wish1.category.name)
-      response.should have_selector("span.description", :content => wish1.description)
-      response.should have_selector("a", :href => wish1.url, :content => wish1.description)
+      before(:each) do
+        wrong_user = Factory(:user, :email => "user@example.net")
+        test_log_in(wrong_user)
+      end
+      
+      it "should be successful" do
+        get :show, :id => @user
+        response.should be_success
+      end
+
+      it "should find the right user" do
+        get :show, :id => @user
+        assigns(:user).should == @user
+      end
+      
+      it "should have the right title" do
+        get :show, :id => @user
+        response.should have_selector("title", :content => @user.name)
+      end
+
+      it "should include the user's name" do
+        get :show, :id => @user
+        response.should have_selector("h1", :content => @user.name)
+      end
+
+      it "should have a profile image" do
+        get :show, :id => @user
+        response.should have_selector("h1>img", :class => "gravatar")
+      end
+      
+      it "should not show the link to change profile image" do
+        get :show, :id => @user
+        response.should_not have_selector("a", :content => "Change image")
+      end
+
+      it "should not show the wish item form" do
+        get :show, :id => @user
+        response.should_not have_selector("td", :content => "Description")
+      end
+
+      it "should show the user's wishes" do
+        category = Factory(:wish_category, :name => "Book")
+        wish1 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Foo bar", 
+                        :url => "http://jim.com",
+                        :category => category)
+        wish2 = Factory(:wish_item,
+                        :user => @user,
+                        :description => "Baz quux",
+                        :url => "http://zumbo.com",
+                        :category => category)
+        get :show, :id => @user
+        response.should have_selector("span.description", :content => wish1.description)
+        response.should have_selector("a", :href => wish1.url, :content => wish1.description)
+        response.should have_selector("span.description", :content => wish2.description)
+        response.should have_selector("a", :href => wish2.url, :content => wish2.description)
+      end
     end
   end
 

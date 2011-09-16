@@ -1,0 +1,24 @@
+<%= form_for @wish_item do |f| %>
+  <%= render 'shared/error_messages', :object => f.object %>
+  <table>
+    <tr>
+      <td>Wish #<%= current_user.wish_items.count + 1 %><br/>Description</td>
+      <td>
+        <div class="field">
+          <%= f.text_area :description %>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>Link</td>
+      <td>
+        <div class="field">
+          <%= f.text_field :url %>
+        </div>
+      </td>
+    </tr>
+  </table
+  <div class="actions">
+    <%= f.submit "Submit" %>
+  </div>
+<% end %>

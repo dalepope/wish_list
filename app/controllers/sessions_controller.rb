@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
       render 'new'
     else
       log_in user
-      redirect_back_or root_path
+      redirect_back_or user
     end
   end
   

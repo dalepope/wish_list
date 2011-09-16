@@ -142,9 +142,9 @@ describe WishItemsController do
         end.should_not change(WishItem, :count)
       end
 
-      it "should render the 'index' page" do
+      it "should render the bare form page" do
         post :create, :wish_item => @attr
-        response.should render_template('index')
+        response.should render_template('bare_wish_item_form')
       end
     end
     
