@@ -28,8 +28,8 @@ class WishItemsController < ApplicationController
     get_users
     if logged_in?
       @wish_item = WishItem.new
+      store_location
     end
-    store_location
   end
 
   private
