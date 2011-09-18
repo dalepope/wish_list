@@ -216,4 +216,16 @@ describe User do
       end
     end
   end
+  
+  describe "drawn name" do
+  
+    before(:each) do
+      @user = User.create!(@attr)
+      @receiver = Factory(:user)
+    end
+    
+    it "should have a drawn_name method" do
+      @user.should respond_to(:drawn_name)
+    end
+  end
 end

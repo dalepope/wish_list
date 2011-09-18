@@ -19,6 +19,7 @@ class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation
 
   has_many :wish_items, :dependent => :destroy
+  has_one :drawn_name, :foreign_key => "giver_id", :dependent => :destroy
 
   default_scope :order => 'users.name ASC'
   
