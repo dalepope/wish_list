@@ -248,4 +248,20 @@ describe User do
       @user.should respond_to(:drawn_name)
     end
   end
+
+  describe "draw exclusions" do
+    
+    before(:each) do
+      @user = User.create!(@attr)
+      @excluded = Factory(:user)
+    end
+    
+    it "should have a draw_exclusions method" do
+      @user.should respond_to(:draw_exclusions)
+    end
+    
+    it "should have a draw_excluding method" do
+      @user.should respond_to(:draw_excluding)
+    end
+  end
 end

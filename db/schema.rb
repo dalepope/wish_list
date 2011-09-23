@@ -10,7 +10,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110920023010) do
+ActiveRecord::Schema.define(:version => 20110923002142) do
+
+  create_table "draw_exclusions", :force => true do |t|
+    t.integer  "excluder_id"
+    t.integer  "excluded_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "draw_exclusions", ["excluded_id"], :name => "index_draw_exclusions_on_excluded_id"
+  add_index "draw_exclusions", ["excluder_id", "excluded_id"], :name => "index_draw_exclusions_on_excluder_id_and_excluded_id", :unique => true
+  add_index "draw_exclusions", ["excluder_id"], :name => "index_draw_exclusions_on_excluder_id"
 
   create_table "drawn_names", :force => true do |t|
     t.integer  "giver_id"
