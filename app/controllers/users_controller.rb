@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   
   def create
     @user = User.new
-    @user.accessible = [:admin] if current_user.admin?
+    @user.accessible = [:admin, :in_draw] if current_user.admin?
     @user.update_attributes(params[:user])
     if @user.save
       flash[:success] = "Added user #{@user.name}"
@@ -42,6 +42,7 @@ class UsersController < ApplicationController
       @title = "Edit Account"
       return render 'edit'
     end
+    @user.accessible = [:admin, :in_draw] if current_user.admin?
     if @user.update_attributes(params[:user])
       flash[:success] = "Account updated."
       redirect_to @user

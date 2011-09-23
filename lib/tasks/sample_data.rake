@@ -18,10 +18,12 @@ def make_users
     name  = Faker::Name.name
     email = "example-#{n+1}@dummy.org"
     password  = "foofoobarbar"
-    User.create!(:name => name,
-                 :email => email,
-                 :password => password,
-                 :password_confirmation => password)
+    user = User.new(:name => name,
+             :email => email,
+             :password => password,
+             :password_confirmation => password)
+    user.toggle!(:in_draw) unless name =~ /[S-Z]/
+    user.save!
   end
 end
 

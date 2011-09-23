@@ -63,6 +63,11 @@ describe UsersController do
         get :new
         response.should have_selector("input[name='user[admin]'][type='checkbox']")
       end
+      
+      it "should have an in-draw checkbox" do
+        get :new
+        response.should have_selector("input[name='user[in_draw]'][type='checkbox']")
+      end
     end
   end
   
@@ -209,6 +214,11 @@ describe UsersController do
         get :show, :id => @user
         response.should_not have_selector("a", :content => "Change image")
       end
+      
+      it "should not show the Christmas draw status" do
+        get :show, :id => @user
+        response.should_not have_selector("p", :content => "Christmas")
+      end
 
       it "should not show the wish item form" do
         get :show, :id => @user
@@ -301,6 +311,11 @@ describe UsersController do
         response.should have_selector("a", :content => "Change image")
       end
 
+      it "should not show the Christmas draw status" do
+        get :show, :id => @user
+        response.should_not have_selector("p", :content => "Christmas")
+      end
+
       it "should show the wish item form" do
         get :show, :id => @user
         response.should have_selector("td", :content => "Description")
@@ -323,6 +338,30 @@ describe UsersController do
         response.should have_selector("a", :href => wish1.url, :content => wish1.description)
         response.should have_selector("span.description", :content => wish2.description)
         response.should have_selector("a", :href => wish2.url, :content => wish2.description)
+      end
+      
+      describe "in the draw" do
+      
+        before(:each) do
+          @user.toggle!(:in_draw)
+        end
+        
+        it "should show Christmas draw status" do
+          get :show, :id => @user
+          response.should have_selector("p", :content => "Christmas")
+          response.should have_selector("p", :content => "No name")
+        end
+        
+        it "should show the drawn name" do
+          receiver = Factory(:user, :email => Factory.next(:email))
+          drawn_name = DrawnName.new
+          drawn_name.giver_id = @user.id
+          drawn_name.receiver_id = receiver.id
+          @user.drawn_name = drawn_name
+          get :show, :id => @user
+          response.should have_selector("p", :content => "Christmas")
+          response.should have_selector("p", :content => receiver.name)
+        end
       end
     end
     
@@ -361,6 +400,11 @@ describe UsersController do
       it "should not show the link to change profile image" do
         get :show, :id => @user
         response.should_not have_selector("a", :content => "Change image")
+      end
+
+      it "should not show the Christmas draw status" do
+        get :show, :id => @user
+        response.should_not have_selector("p", :content => "Christmas")
       end
 
       it "should not show the wish item form" do
@@ -427,6 +471,11 @@ describe UsersController do
         get :edit, :id => @user
         response.should_not have_selector("input[name='user[admin]'][type='checkbox']")
       end
+      
+      it "should not have an in-draw checkbox" do
+        get :edit, :id => @user
+        response.should_not have_selector("input[name='user[in_draw]'][type='checkbox']")
+      end
     end
     
     describe "for logged in admins" do
@@ -458,6 +507,11 @@ describe UsersController do
       it "should have an admin checkbox" do
         get :edit, :id => @user
         response.should have_selector("input[name='user[admin]'][type='checkbox']")
+      end
+      
+      it "should have an in-draw checkbox" do
+        get :edit, :id => @user
+        response.should have_selector("input[name='user[in_draw]'][type='checkbox']")
       end
     end
   end

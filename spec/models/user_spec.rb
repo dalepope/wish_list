@@ -182,6 +182,26 @@ describe User do
     end
   end
 
+  describe "in_draw attribute" do
+
+    before(:each) do
+      @user = User.create!(@attr.merge(:in_draw => true))
+    end
+
+    it "should respond to in_draw" do
+      @user.should respond_to(:in_draw)
+    end
+
+    it "should not be in the draw by default" do
+      @user.should_not be_in_draw
+    end
+
+    it "should be convertible to be in the draw" do
+      @user.toggle!(:in_draw)
+      @user.should be_in_draw
+    end
+  end
+  
   describe "wish_item associations" do
 
     before(:each) do

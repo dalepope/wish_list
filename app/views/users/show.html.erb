@@ -1,12 +1,21 @@
 <h1><%= gravatar_for @user %><%= @user.name %></h1>
 
 <% if current_user?(@user) %>
-  <% if @user.admin? %>
-    <p>Administrator</p>
-  <% end %>
   <div>
     <p><a href="http://gravatar.com/emails" target="_blank">Change image (gravatar)</a></p>
   </div>
+  <% if @user.admin? %>
+    <p>Administrator</p>
+  <% end %>
+  <% if @user.in_draw? %>
+    <p>You are in the Christmas draw.
+    <% unless @user.drawn_name.blank? %>
+      You drew <%= @user.drawn_name.receiver.name %>
+    <% else %>
+      No name has been drawn for you yet.
+    <% end %>
+    </p>
+  <% end %>
   <table class="front">
     <tr>
       <td>
