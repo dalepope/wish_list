@@ -63,6 +63,18 @@ class User < ActiveRecord::Base
     (user && user.salt == cookie_salt) ? user : nil
   end
   
+  def draw_excluding?(excluded)
+    draw_exclusions.find_by_excluded_id(excluded)
+  end
+
+  def draw_exclude!(excluded)
+    draw_exclusions.create!(:excluded_id => excluded.id)
+  end
+  
+  def draw_include!(excluded)
+    draw_exclusions.find_by_excluded_id(excluded).destroy
+  end
+
   private
   
     def encrypt_password

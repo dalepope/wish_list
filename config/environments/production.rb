@@ -1,3 +1,5 @@
+require 'rack/ssl'
+
 WishList::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -46,4 +48,7 @@ WishList::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+  
+  config.middleware.use Rack::SSL
+  config.middleware.insert_before ActionDispatch::Cookies, Rack::SSL
 end

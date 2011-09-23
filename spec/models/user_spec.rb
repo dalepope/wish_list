@@ -263,5 +263,29 @@ describe User do
     it "should have a draw_excluding method" do
       @user.should respond_to(:draw_excluding)
     end
+    
+    it "should have a draw_exclude! method" do
+      @user.should respond_to(:draw_exclude!)
+    end
+
+    it "should exclude another user" do
+      @user.draw_exclude!(@excluded)
+      @user.should be_draw_excluding(@excluded)
+    end
+
+    it "should include the excluded user in the excluding array" do
+      @user.draw_exclude!(@excluded)
+      @user.draw_excluding.should include(@excluded)
+    end
+    
+    it "should have a draw_include! method" do
+      @user.should respond_to(:draw_include!)
+    end
+
+    it "should include another user" do
+      @user.draw_exclude!(@excluded)
+      @user.draw_include!(@excluded)
+      @user.should_not be_draw_excluding(@excluded)
+    end
   end
 end
