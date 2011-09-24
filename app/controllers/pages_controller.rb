@@ -6,10 +6,6 @@ class PagesController < ApplicationController
     @title = "Administration"
   end
   
-  def draw_names_status
-    @title = "Draw Names Status"
-  end
-
   private
   
     def admin_user

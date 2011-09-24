@@ -1,12 +1,15 @@
 WishList::Application.routes.draw do
 
   get "pages/admin"
-  get "pages/draw_names_status"
 
-  resources :users
-  resources :wish_items
+  resources :users do
+    member do
+      get :draw_excluding
+    end
+  end
+  resources :wish_items, :only => [:create, :destroy, :index]
   resources :sessions, :only => [:new, :create, :destroy]
-  resources :draw_names
+  resources :draw_names, :only => [:new, :create]
   
   match '/login', :to => 'sessions#new'
   match '/logout', :to => 'sessions#destroy'
