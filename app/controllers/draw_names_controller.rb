@@ -10,15 +10,14 @@ class DrawNamesController < ApplicationController
     DrawnName.delete_all
   
     givers = User.find_all_by_in_draw(true)
+    
+    # help prevent unresolvable situations by sorting givers by the number of
+    # excluding (greatest to least)
+    givers.sort! { |a, b| b.draw_excluding.count <=> a.draw_excluding.count }
 
-    # todo
-    givers.each do |p|
-      p[:exclusions] = []
-    end
- 
     # draw the names (just in memory for now)
     givers.each do |g|
-      available = givers.reject {|a| a[:picked] || g[:exclusions].index(a[:id]) || g[:id] == a[:id]}
+      available = givers.reject { |a| a[:picked] || g.draw_excluding.index(a) || g[:id] == a[:id] }
       if available.count == 0
         flash.now[:error] = "Unresolvable"
         render 'new'
@@ -41,7 +40,6 @@ class DrawNamesController < ApplicationController
     end
     
     flash.now[:success] = "Names drawn" if success
-    
     render 'new'
   end
   

@@ -5,6 +5,7 @@ namespace :db do
     make_users
     make_wish_categories
     make_wish_items
+    make_draw_exclusions
   end
 end
 
@@ -43,5 +44,14 @@ def make_wish_items
                        :category_id => category.id,
                        :user_id => user.id)
     end
+  end
+end
+
+def make_draw_exclusions
+  users = User.all
+  excluding = users[8..15]
+  users[0..7].each do |user|
+    excluding.each { |x| user.draw_exclude!(x) if user.in_draw && x.in_draw }
+    excluding.pop
   end
 end
