@@ -19,7 +19,7 @@ class DrawNamesController < ApplicationController
     givers.each do |g|
       available = givers.reject { |a| a[:picked] || g.draw_excluding.index(a) || g[:id] == a[:id] }
       if available.count == 0
-        flash.now[:error] = "Unresolvable"
+        flash.now[:error] = "Unresolvable. Try again."
         render 'new'
         return
       end

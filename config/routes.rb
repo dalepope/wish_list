@@ -9,7 +9,7 @@ WishList::Application.routes.draw do
   end
   resources :wish_items, :only => [:create, :destroy, :index]
   resources :sessions, :only => [:new, :create, :destroy]
-  resources :draw_names, :only => [:new, :create]
+  resources :draw_names, :only => [:new, :create, :index]
   
   match '/login', :to => 'sessions#new'
   match '/logout', :to => 'sessions#destroy'
