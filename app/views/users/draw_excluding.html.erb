@@ -1,0 +1,20 @@
+<h1>Exclusions</h1>
+
+<% if @user.in_draw %>
+  <% if @user.draw_excluding.count > 0 %>
+    <p>You cannot draw the following names:</p>
+    <ul class="users">
+      <% @user.draw_excluding.each do |excluded| %>
+        <li>
+          <%= gravatar_for excluded, :size => 30 %>
+          <%= link_to excluded.name, excluded %>
+        </li>
+      <% end %>
+    </ul>
+    <p>If someone needs to be added or removed from this list, contact <%= webmaster_contact %>.</p>
+  <% else %>
+    <p>You can draw anyone's name. To add a name that you cannot draw, contact <%= webmaster_contact %>.</p>
+  <% end %>
+<% else %>
+  <p>You are not in the Christmas draw. To be added to the draw, contact <%= webmaster_contact %>.</p>
+<% end %>

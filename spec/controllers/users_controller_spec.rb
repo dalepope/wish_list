@@ -648,4 +648,46 @@ describe UsersController do
       end
     end
   end
+
+  describe "GET 'draw_excluding'" do
+  
+    before(:each) do
+      @user = Factory(:user)
+    end
+  
+    describe "for non-logged-in users" do
+      it "should deny access" do
+        get :draw_excluding, :id => @user
+        response.should redirect_to(login_path)
+        flash[:notice].should =~ /log in/i
+      end
+    end
+
+    describe "for wrong users" do
+      it "should deny access" do
+        wrong_user = Factory(:user, :email => "user@example.net")
+        test_log_in(wrong_user)
+        get :draw_excluding, :id => @user
+        response.should redirect_to(root_path)
+        flash[:error].should =~ /not an owner/i
+      end
+    end
+    
+    describe "for logged-in users" do
+
+      before(:each) do
+        @user = test_log_in(@user)
+      end
+
+      it "should be successful" do
+        get :draw_excluding, :id => @user
+        response.should be_success
+      end
+      
+      it "should have the right title" do
+        get :draw_excluding, :id => @user
+        response.should have_selector("title", :content => "Exclusions")
+      end
+    end
+  end
 end

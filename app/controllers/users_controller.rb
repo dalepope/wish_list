@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :authenticate, :except => [:show, :index]
-  before_filter :correct_user, :only => [:edit, :update]
+  before_filter :correct_user, :only => [:edit, :update, :draw_excluding]
   before_filter :admin_user, :only => [:new, :create]
 
   def new
@@ -57,6 +57,11 @@ class UsersController < ApplicationController
     @title = "Wishers"
   end
   
+  def draw_excluding
+    @title = "Exclusions"
+    @user = User.find(params[:id])
+  end
+  
   private
   
     def admin_user
@@ -68,6 +73,9 @@ class UsersController < ApplicationController
     
     def correct_user
       @user = User.find(params[:id])
-      redirect_to(root_path) unless current_user?(@user) || current_user.admin?
+      unless current_user?(@user) || current_user.admin?
+        flash[:error] = "You are not an owner of #{request.fullpath}."
+        redirect_to(root_path)
+      end
     end
 end
