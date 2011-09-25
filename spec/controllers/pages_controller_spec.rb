@@ -48,6 +48,11 @@ describe PagesController do
         get :admin
         response.should have_selector("a", :href => new_draw_name_path, :content => "Draw names")
       end
+      
+      it "should have a see drawn names link" do
+        get :admin
+        response.should have_selector("a", :href => draw_names_path, :content => "See drawn names")
+      end
     end
   end
 end

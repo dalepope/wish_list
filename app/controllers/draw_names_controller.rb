@@ -43,6 +43,11 @@ class DrawNamesController < ApplicationController
     render 'new'
   end
   
+  def index
+    @users = User.all
+    @title = "Drawn Names"
+  end
+  
   private
   
     def admin_user

@@ -1,0 +1,26 @@
+<h1>Drawn Names</h1>
+
+<table class="users">
+  <% @users.each do |user| %>
+    <tr>
+      <td>
+        <%= gravatar_for user, :size => 30 %>
+        <%= link_to user.name, user %>
+      </td>
+      <% if user.in_draw %>
+        <td>picked</td>
+        <% if user.drawn_name.blank? %>
+          <td>no one</td>
+          <td/>
+        <% else %>
+          <td><%= link_to user.drawn_name.receiver.name, user.drawn_name.receiver %></td>
+          <td><%= user.drawn_name.updated_at %></td>
+        <% end %>
+      <% else %>
+        <td>not in the draw</td>
+        <td/>
+        <td/>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
