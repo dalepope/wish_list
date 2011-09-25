@@ -688,6 +688,40 @@ describe UsersController do
         get :draw_excluding, :id => @user
         response.should have_selector("title", :content => "Exclusions")
       end
+      
+      describe "not in the draw" do
+        it "should say not in the draw" do
+          get :draw_excluding, :id => @user
+          response.should have_selector("p", :content => "not in the Christmas draw")
+        end
+      end
+      
+      describe "in the draw" do
+      
+        before(:each) do
+          @user.toggle!(:in_draw)
+        end
+
+        describe "with no exclusions" do
+          it "should say any name can be drawn" do
+            get :draw_excluding, :id => @user
+            response.should have_selector("p", :content => "can draw anyone's name")
+          end
+        end
+      
+        describe "with exclusions" do
+          it "should list the exclusions" do
+            excluded1 = Factory(:user, :email => Factory.next(:email))
+            excluded2 = Factory(:user, :email => Factory.next(:email))
+            @user.draw_exclude!(excluded1)
+            @user.draw_exclude!(excluded2)
+            get :draw_excluding, :id => @user
+            response.should have_selector("p", :content => "cannot draw the following")
+            response.should have_selector("li", :content => excluded1.name)
+            response.should have_selector("li", :content => excluded2.name)
+          end
+        end
+      end
     end
   end
 end
