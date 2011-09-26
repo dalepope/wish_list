@@ -6,6 +6,12 @@ class PagesController < ApplicationController
     @title = "Administration"
   end
   
+  def draw_rules
+    @givers = User.find_all_by_in_draw(true)
+    @drawless = User.find_all_by_in_draw(false)
+    @title = "Draw Rules"
+  end
+  
   private
   
     def admin_user

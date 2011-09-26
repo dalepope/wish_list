@@ -2,7 +2,7 @@
 
 <% if @user.in_draw %>
   <% if @user.draw_excluding.count > 0 %>
-    <p>You cannot draw the following names:</p>
+    <p><%= current_user?(@user) ? "You" : @user.name %> cannot draw the following names:</p>
     <ul class="users">
       <% @user.draw_excluding.each do |excluded| %>
         <li>
@@ -17,4 +17,15 @@
   <% end %>
 <% else %>
   <p>You are not in the Christmas draw. To be added to the draw, contact <%= webmaster_contact %>.</p>
+<% end %>
+
+<% if current_user.admin? %>
+  <ul>
+    <% @users.each do |user| %>
+      <li>
+        <%= gravatar_for user, :size => 30 %>
+        <%= link_to user.name, user %> - <%= link_to "Cannot draw" %>
+      </li>
+    <% end %>
+  </ul>
 <% end %>

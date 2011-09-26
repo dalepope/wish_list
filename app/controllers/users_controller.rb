@@ -60,6 +60,9 @@ class UsersController < ApplicationController
   def draw_excluding
     @title = "Exclusions"
     @user = User.find(params[:id])
+    if current_user.admin?
+      @users = User.where("in_draw = 't' and id <> ?", current_user.id)
+    end
   end
   
   private

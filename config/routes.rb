@@ -1,6 +1,7 @@
 WishList::Application.routes.draw do
 
   get "pages/admin"
+  get "pages/draw_rules"
 
   resources :users do
     member do

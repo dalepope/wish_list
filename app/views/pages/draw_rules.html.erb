@@ -1,0 +1,34 @@
+<h1>Draw Rules</h1>
+
+<h3>Users in the draw</h3>
+<ul class="users">
+  <% @givers.each do |user| %>
+    <li>
+      <%= gravatar_for user, :size => 30 %>
+      <%= link_to user.name, draw_excluding_user_path(user) %>
+      <% if user.draw_excluding.count > 0 %>
+        cannot draw the following names:
+        <ul>
+          <% user.draw_excluding.each do |excluded| %>
+            <li>
+              <%= gravatar_for excluded, :size => 30 %>
+              <%= link_to excluded.name, excluded %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        can draw any name
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<h3>Users not in the draw</h3>
+<ul>
+  <% @drawless.each do |user| %>
+    <li>
+      <%= gravatar_for user, :size => 30 %>
+      <%= link_to user.name, user %>
+    </li>
+  <% end %>
+</ul>

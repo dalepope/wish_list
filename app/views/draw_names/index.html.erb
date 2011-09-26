@@ -13,7 +13,10 @@
           <td>no one</td>
           <td/>
         <% else %>
-          <td><%= link_to user.drawn_name.receiver.name, user.drawn_name.receiver %></td>
+          <td>
+            <%= gravatar_for user, :size => 30 %>
+            <%= link_to user.drawn_name.receiver.name, user.drawn_name.receiver %>
+          </td>
           <td><%= user.drawn_name.updated_at %></td>
         <% end %>
       <% else %>
