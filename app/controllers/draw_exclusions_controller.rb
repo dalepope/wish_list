@@ -10,10 +10,6 @@ class DrawExclusionsController < ApplicationController
   end
   
   def destroy
-    # excluder = User.find(params[:draw_exclusion][:excluder_id])
-    # excluded = Relationship.find(params[:id]).followed
-    # excluder.draw_include!(excluded)
-    # excluder = User.find(params[:draw_exclusion][:excluder_id])
     exclusion = DrawExclusion.find(params[:id])
     excluder = User.find(exclusion.excluder_id)
     exclusion.delete

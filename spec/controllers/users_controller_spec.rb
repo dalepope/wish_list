@@ -710,15 +710,87 @@ describe UsersController do
         end
       
         describe "with exclusions" do
+        
+          before(:each) do
+            @excluded1 = Factory(:user, :email => Factory.next(:email))
+            @user.draw_exclude!(@excluded1)
+          end
+        
           it "should list the exclusions" do
-            excluded1 = Factory(:user, :email => Factory.next(:email))
             excluded2 = Factory(:user, :email => Factory.next(:email))
-            @user.draw_exclude!(excluded1)
             @user.draw_exclude!(excluded2)
             get :draw_excluding, :id => @user
             response.should have_selector("p", :content => "cannot draw the following")
-            response.should have_selector("li", :content => excluded1.name)
+            response.should have_selector("li", :content => @excluded1.name)
             response.should have_selector("li", :content => excluded2.name)
+          end
+          
+          it "should not list additional users" do
+            spare_user = Factory(:user, :name => Factory.next(:name), :email => Factory.next(:email))
+            spare_user.toggle!(:in_draw)
+            get :draw_excluding, :id => @user
+            response.should_not have_selector("li", :content => spare_user.name)
+          end
+          
+          it "should not have exclude buttons" do
+            get :draw_excluding, :id => @user
+            response.should_not have_selector("input", :type => "submit", :value => "draw")
+          end
+        end
+      end
+    end
+      
+    describe "for logged-in admins" do
+
+      before(:each) do
+        @admin = Factory(:user, :name => Factory.next(:name), :email => Factory.next(:email))
+        @admin = test_log_in(@admin)
+        @admin.toggle!(:admin)
+      end
+
+      it "should be successful" do
+        get :draw_excluding, :id => @user
+        response.should be_success
+      end
+      
+      describe "not in the draw" do
+        it "should say not in the draw" do
+          get :draw_excluding, :id => @user
+          response.should have_selector("p", :content => "not in the Christmas draw")
+        end
+      end
+      
+      describe "in the draw" do
+      
+        before(:each) do
+          @user.toggle!(:in_draw)
+        end
+
+        describe "with exclusions" do
+        
+          before(:each) do
+            @excluded1 = Factory(:user, :email => Factory.next(:email))
+            @excluded1.toggle!(:in_draw)
+            @user.draw_exclude!(@excluded1)
+            @spare_user = Factory(:user, :name => Factory.next(:name), :email => Factory.next(:email))
+            @spare_user.toggle!(:in_draw)
+          end
+        
+          it "should list the exclusions" do
+            get :draw_excluding, :id => @user
+            response.should have_selector("p", :content => "cannot draw the following")
+            response.should have_selector("li", :content => @excluded1.name)
+          end
+          
+          it "should list additional users" do
+            get :draw_excluding, :id => @user
+            response.should have_selector("li", :content => @spare_user.name)
+          end
+          
+          it "should have exclude buttons" do
+            get :draw_excluding, :id => @user
+            response.should have_selector("input", :type => "submit", :value => "Can draw")
+            response.should have_selector("input", :type => "submit", :value => "Cannot draw")
           end
         end
       end
