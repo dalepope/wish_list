@@ -18,7 +18,7 @@ module WishItemsHelper
   def make_fake_wish
     fake_wish = 
       [ { :description => "Rubber bits", 
-          :url => "http://www.amazon.com/Trojan-Durex-Condoms-Condom-Variety/dp/B000UXMN2A"
+          :url => ""
         },
         { :description => "Everything by John Milton",
           :url => "http://www.amazon.com/Complete-Poetry-Essential-Milton-Library/dp/0679642536"

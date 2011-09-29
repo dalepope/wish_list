@@ -4,3 +4,4 @@ log/*.log
 tmp/
 bin/
 webrat.log
+lib/tasks/family_data.rake
