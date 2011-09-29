@@ -27,6 +27,10 @@ module SessionsHelper
     user == current_user
   end
   
+  def relative_user_name(user)
+    current_user?(user) ? "You" : user.name
+  end
+  
   def authenticate
     deny_access unless logged_in?
   end
@@ -34,6 +38,13 @@ module SessionsHelper
   def deny_access
     store_location
     redirect_to login_path, :notice => "Please log in to access this page."
+  end
+  
+  def admin_user
+    unless current_user.admin?
+      flash[:error] = "You do not have permission to #{request.fullpath}."
+      redirect_to(root_path)
+    end
   end
   
   def redirect_back_or(default)
@@ -44,7 +55,7 @@ module SessionsHelper
   def store_location
     session[:return_to] = request.fullpath
   end
-    
+  
   private
   
     def user_from_remember_token

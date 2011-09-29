@@ -11,6 +11,7 @@ WishList::Application.routes.draw do
   resources :wish_items, :only => [:create, :destroy, :index]
   resources :sessions, :only => [:new, :create, :destroy]
   resources :draw_names, :only => [:new, :create, :index]
+  resources :draw_exclusions, :only => [:create, :destroy]
   
   match '/login', :to => 'sessions#new'
   match '/logout', :to => 'sessions#destroy'

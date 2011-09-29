@@ -44,6 +44,11 @@ describe PagesController do
         response.should have_selector("a", :href => new_user_path, :content => "Add a user")
       end
       
+      it "should have a see users link" do
+        get :admin
+        response.should have_selector("a", :href => users_path, :content => "See users")
+      end
+      
       it "should have a see draw rules link" do
         get :admin
         response.should have_selector("a", :href => pages_draw_rules_path, :content => "See drawing rules")

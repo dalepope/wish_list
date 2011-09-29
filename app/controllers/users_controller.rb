@@ -61,19 +61,12 @@ class UsersController < ApplicationController
     @title = "Exclusions"
     @user = User.find(params[:id])
     if current_user.admin?
-      @users = User.where("in_draw = 't' and id <> ?", current_user.id)
+      @users = User.draw_excludable(@user)
     end
   end
   
   private
   
-    def admin_user
-      unless current_user.admin?
-        flash[:error] = "You do not have permission to #{request.fullpath}."
-        redirect_to(root_path)
-      end
-    end
-    
     def correct_user
       @user = User.find(params[:id])
       unless current_user?(@user) || current_user.admin?

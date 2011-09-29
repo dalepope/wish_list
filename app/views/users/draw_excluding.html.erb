@@ -2,29 +2,46 @@
 
 <% if @user.in_draw %>
   <% if @user.draw_excluding.count > 0 %>
-    <p><%= current_user?(@user) ? "You" : @user.name %> cannot draw the following names:</p>
+    <p><%= relative_user_name(@user) %> cannot draw the following names:</p>
     <ul class="users">
       <% @user.draw_excluding.each do |excluded| %>
         <li>
-          <%= gravatar_for excluded, :size => 30 %>
-          <%= link_to excluded.name, excluded %>
+          <% unless current_user.admin? %>
+            <%= gravatar_for excluded, :size => 30 %>
+            <%= link_to excluded.name, excluded %>
+          <% else %>
+            <%= form_for @user.draw_exclusions.find_by_excluded_id(excluded),
+                         :html => { :method => :delete } do |f| %>
+              <%= f.hidden_field :excluded_id %>
+              <%= f.hidden_field :excluder_id %>
+              <%= gravatar_for excluded, :size => 30 %>
+              <%= link_to excluded.name, excluded %>
+              <%= f.submit "Can draw" %>
+            <% end %>
+          <% end %>
         </li>
       <% end %>
     </ul>
     <p>If someone needs to be added or removed from this list, contact <%= webmaster_contact %>.</p>
   <% else %>
-    <p>You can draw anyone's name. To add a name that you cannot draw, contact <%= webmaster_contact %>.</p>
+    <p><%= relative_user_name(@user) %> can draw anyone's name. To add a name that you cannot draw, contact <%= webmaster_contact %>.</p>
   <% end %>
 <% else %>
-  <p>You are not in the Christmas draw. To be added to the draw, contact <%= webmaster_contact %>.</p>
+  <p><%= relative_user_name(@user) %> are not in the Christmas draw. To be added to the draw, contact <%= webmaster_contact %>.</p>
 <% end %>
 
 <% if current_user.admin? %>
-  <ul>
+  <ul class="users">
     <% @users.each do |user| %>
       <li>
-        <%= gravatar_for user, :size => 30 %>
-        <%= link_to user.name, user %> - <%= link_to "Cannot draw" %>
+        <%= form_for @user.draw_exclusions. 
+                          build(:excluded_id => user.id) do |f| %>
+          <%= f.hidden_field :excluded_id %>
+          <%= f.hidden_field :excluder_id %>
+          <%= gravatar_for user, :size => 30 %>
+          <%= link_to user.name, user %> - 
+          <%= f.submit "Cannot draw" %>
+        <% end %>
       </li>
     <% end %>
   </ul>

@@ -63,16 +63,29 @@ class User < ActiveRecord::Base
     (user && user.salt == cookie_salt) ? user : nil
   end
   
+  # does the user exclude a specified user from being drawn?
   def draw_excluding?(excluded)
     draw_exclusions.find_by_excluded_id(excluded)
   end
 
+  # exclude a specified user from being drawn
   def draw_exclude!(excluded)
     draw_exclusions.create!(:excluded_id => excluded.id)
   end
   
+  # include a specified user so that the name can be drawn
   def draw_include!(excluded)
     draw_exclusions.find_by_excluded_id(excluded).destroy
+  end
+  
+  # get all users that can be excluded (i.e., all users in the draw other than the 
+  # current user and already excluded users)
+  def self.draw_excludable(user)
+    clause = "in_draw = 't' and id <> ?"
+    if user.draw_exclusions.count > 0
+      clause += " and id not in (#{user.draw_exclusions.map(&:excluded_id).join(",")})"
+    end
+    where(clause, user)
   end
 
   private
