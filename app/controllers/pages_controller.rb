@@ -1,6 +1,6 @@
 class PagesController < ApplicationController
   before_filter :authenticate
-  before_filter :admin_user
+  before_filter :admin_user, :only => :admin
 
   def admin
     @title = "Administration"

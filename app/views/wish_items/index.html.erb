@@ -6,6 +6,13 @@
         <%= render 'wish_item_form' %>
       </td>
     </tr>
+    <% unless current_user.drawn_name.blank? %>
+      <tr>
+        <td>
+          You drew <%= link_to current_user.drawn_name.receiver.name, current_user.drawn_name.receiver %> in the Christmas draw.<br/><br/>
+        </td>
+      </tr>
+    <% end %>
   <% end %>
   <tr>
     <td class="wish_lists">

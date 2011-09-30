@@ -10,10 +10,11 @@
   <% if @user.in_draw? %>
     <p>You are in the Christmas draw.
     <% unless @user.drawn_name.blank? %>
-      You drew <%= @user.drawn_name.receiver.name %>
+      You drew <%= link_to @user.drawn_name.receiver.name, @user.drawn_name.receiver %>.
     <% else %>
       No name has been drawn for you yet.
     <% end %>
+      See <%= link_to "who you cannot draw", :draw_excluding_user %>.
     </p>
   <% end %>
   <table class="front">

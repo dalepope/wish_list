@@ -3,6 +3,7 @@ class WishItemsController < ApplicationController
   before_filter :authorized_user, :only => :destroy
 
   def create
+    params[:wish_item][:url] = "http://" + params[:wish_item][:url] unless params[:wish_item][:url].downcase.starts_with?("http") or params[:wish_item][:url].blank?
     @wish_item = current_user.wish_items.build(params[:wish_item])
     @wish_item.description.gsub!(/\n/, "<br/>")
     if WishCategory.count == 0
@@ -12,10 +13,16 @@ class WishItemsController < ApplicationController
     @wish_item.category_id = category.id
     if @wish_item.save
       flash[:success] = "Added wish"
-      redirect_back_or root_path
+      respond_to do |format|
+        format.html { redirect_back_or root_path @user }
+        format.js
+      end
     else
       get_users
-      render 'wish_items/bare_wish_item_form'
+      respond_to do |format|
+        format.html { render 'wish_items/bare_wish_item_form' }
+        format.js
+      end
     end
   end
 
