@@ -2,8 +2,8 @@
 <html>
   <head>
     <title><%= title %></title>
-    <%= auto_discovery_link_tag :atom, "/feed.atom" %>
-    <%= auto_discovery_link_tag :rss, "/feed.rss" %>
+    <%= auto_discovery_link_tag :atom, root_path + "feed.atom" %>
+    <%= auto_discovery_link_tag :rss, root_path + "feed.rss" %>
     <%= stylesheet_link_tag :all %>
     <%= javascript_include_tag :defaults %>
     <%= csrf_meta_tag %>
