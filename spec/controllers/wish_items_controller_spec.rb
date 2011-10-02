@@ -205,4 +205,95 @@ describe WishItemsController do
       end
     end
   end
+
+  describe "GET 'feed'" do
+  
+    before(:each) do
+      category1 = Factory(:wish_category, :name => "Book")
+      category2 = Factory(:wish_category, :name => "DVD")
+      @users = [ ]
+      4.times do |i|
+        @users << Factory(:user, 
+                          :name => Factory.next(:name),
+                          :email => Factory.next(:email))
+        Factory(:wish_item,
+                :user => @users[i],
+                :description => Factory.next(:description), 
+                :category => category1)
+        Factory(:wish_item,
+                :user => @users[i],
+                :description => Factory.next(:description),
+                :category => category2)
+      end
+    end
+  
+    describe "in atom format" do
+      it "should be successful" do
+        get :feed, :format => 'atom'
+        response.should be_success
+      end
+      
+      it "should have the right title" do
+        get :feed, :format => 'atom'
+        response.should have_selector("title", :content => "Wish Lists")
+      end
+      
+      it "should have an element for each user" do
+        get :feed, :format => 'atom'
+        @users.each do |user|
+          response.should have_selector("name", :content => user.name)
+        end
+      end
+      
+      it "should have a title element for each wish" do
+        get :feed, :format => 'atom'
+        @users.each do |user|
+          user.wish_items.each do |wish|
+            response.should have_selector("title", :content => user.name)
+            response.should have_selector("title", :content => wish.description)
+          end
+        end
+      end
+      
+      it "should have a content element for each wish" do
+        get :feed, :format => 'atom'
+        @users.each do |user|
+          user.wish_items.each do |wish|
+            response.should have_selector("content", :content => user.name)
+            response.should have_selector("content", :content => wish.description)
+          end
+        end
+      end
+      
+      it "should have a url for each wish" do
+        get :feed, :format => 'atom'
+        @users.each do |user|
+          user.wish_items.each do |wish|
+            response.should have_selector("url", :content => wish.id.to_s)
+          end
+        end
+      end
+    end
+    
+    describe "in rss format" do
+      it "should redirect to atom" do
+        get :feed, :format => 'rss'
+        response.should be_redirect
+      end
+    end
+    
+    describe "named routes" do
+      it "should route from /feed" do
+        { :get => '/feed' }.should route_to(:controller => 'wish_items', :action => 'feed', :format => 'atom')
+      end
+      
+      it "should route from /feed.atom" do
+        { :get => '/feed.atom' }.should route_to(:controller => 'wish_items', :action => 'feed', :format => 'atom')
+      end
+      
+      it "should route from /feed.rss" do
+        { :get => '/feed.rss' }.should route_to(:controller => 'wish_items', :action => 'feed', :format => 'rss')
+      end
+    end
+  end
 end

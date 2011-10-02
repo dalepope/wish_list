@@ -3,5 +3,8 @@
 
 // move focus to first form element
 window.onload = function() {
-  Form.focusFirstElement(document.forms[0]);
+  if (window.location.hash === "")
+  {
+    Form.focusFirstElement(document.forms[0]);
+  }
 }

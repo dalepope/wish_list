@@ -76,20 +76,10 @@ describe PagesController do
       end
     end
     
-    describe "for logged-in non-admins" do
-      it "should deny access" do
-        @user = test_log_in(Factory(:user))
-        get :draw_rules
-        response.should redirect_to(root_path)
-        flash[:error].should =~ /do not have permission/i
-      end
-    end
-    
-    describe "for logged-in admins" do
+    describe "for logged-in users" do
 
       before(:each) do
         @user = test_log_in(Factory(:user))
-        @user.toggle!(:admin)
         @givers = [@user]
         19.times do
           @givers << Factory(:user, :email => Factory.next(:email))

@@ -8,13 +8,16 @@ WishList::Application.routes.draw do
       get :draw_excluding
     end
   end
-  resources :wish_items, :only => [:create, :destroy, :index]
+  resources :wish_items, :only => [:create, :destroy, :index, :show]
   resources :sessions, :only => [:new, :create, :destroy]
   resources :draw_names, :only => [:new, :create, :index]
   resources :draw_exclusions, :only => [:create, :destroy]
   
   match '/login', :to => 'sessions#new'
   match '/logout', :to => 'sessions#destroy'
+  
+  get "wish_items/feed"
+  match '/feed' => 'wish_items#feed', :as => :feed, :defaults => { :format => 'atom' }
   
   root :to => 'wish_items#index'
   

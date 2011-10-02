@@ -57,16 +57,16 @@ module WishItemsHelper
           :url => "http://www.youtube.com/watch?v=zoK0BzYUTrU"
         },
         { :description => "Red Ryder BB gun",
-          :url => ""
+          :url => "http://www.youtube.com/watch?v=ppOXpyhM2wA"
         },
         { :description => "A cashmere sweater",
-          :url => ""
+          :url => "http://www.youtube.com/watch?v=dTsTFTIvwJw"
         },
         { :description => "Okama Gamesphere",
           :url => ""
         },
         { :description => "An IBC towel",
-          :url => ""
+          :url => "http://www.imdb.com/title/tt0096061/quotes?qt0266442"
         },
         { :description => "USB Toaster",
           :url => "http://store.theonion.com/product/usb-powered-toastergift-box,29/"

@@ -3,7 +3,7 @@ class WishItemsController < ApplicationController
   before_filter :authorized_user, :only => :destroy
 
   def create
-    params[:wish_item][:url] = "http://" + params[:wish_item][:url] unless params[:wish_item][:url].downcase.starts_with?("http") or params[:wish_item][:url].blank?
+    params[:wish_item][:url] = "http://" + params[:wish_item][:url] unless params[:wish_item][:url].blank? or params[:wish_item][:url].downcase.starts_with?("http")
     @wish_item = current_user.wish_items.build(params[:wish_item])
     @wish_item.description.gsub!(/\n/, "<br/>")
     if WishCategory.count == 0
@@ -39,6 +39,21 @@ class WishItemsController < ApplicationController
     end
   end
 
+  def feed
+    @title = "Wish Lists"
+    @wish_items = WishItem.order("updated_at desc")
+    @updated = @wish_items.first.updated_at unless @wish_items.empty?
+    
+    respond_to do |format|
+      format.atom { render :layout => false }
+      format.rss { redirect_to feed_path(:format => :atom), :status => :moved_permanently }
+    end
+  end
+  
+  def show
+    redirect_to wish_items_path(:anchor => "wish" + params[:id])
+  end
+  
   private
   
     def get_users
