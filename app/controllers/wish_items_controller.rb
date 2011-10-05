@@ -3,7 +3,7 @@ class WishItemsController < ApplicationController
   before_filter :authorized_user, :only => [:edit, :update, :destroy]
 
   def create
-    params[:wish_item][:url] = "http://" + params[:wish_item][:url] unless params[:wish_item][:url].blank? or params[:wish_item][:url].downcase.starts_with?("http")
+    params[:wish_item][:url] = nice_url(params[:wish_item][:url])
     @wish_item = current_user.wish_items.build(params[:wish_item])
     @wish_item.description.gsub!(/\n/, "<br/>")
     if WishCategory.count == 0
@@ -57,14 +57,18 @@ class WishItemsController < ApplicationController
   def edit
     @title = "Edit Wish"
     @wish_item = WishItem.find(params[:id])
+    @wish_item.description.gsub!(/<br\/>/, "\n")
   end
   
   def update
+    params[:wish_item][:url] = nice_url(params[:wish_item][:url])
+    params[:wish_item][:description].gsub!(/\n/, "<br/>")
     if @wish_item.update_attributes(params[:wish_item])
       flash[:success] = "Updated wish."
       redirect_back_or root_path
     else
       @title = "Edit Wish"
+      @wish_item.description.gsub!(/<br\/>/, "\n")
       render 'edit'
     end
   end
@@ -82,5 +86,10 @@ class WishItemsController < ApplicationController
     def authorized_user
       @wish_item = current_user.wish_items.find_by_id(params[:id])
       redirect_to root_path if @wish_item.nil?
+    end
+    
+    def nice_url(url)
+      return url if url.blank? or url.downcase.starts_with?("http")
+      "http://" + url
     end
 end
