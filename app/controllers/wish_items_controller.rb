@@ -1,6 +1,6 @@
 class WishItemsController < ApplicationController
-  before_filter :authenticate, :only => [:create, :destroy]
-  before_filter :authorized_user, :only => :destroy
+  before_filter :authenticate, :except => [:show, :index, :feed]
+  before_filter :authorized_user, :only => [:edit, :update, :destroy]
 
   def create
     params[:wish_item][:url] = "http://" + params[:wish_item][:url] unless params[:wish_item][:url].blank? or params[:wish_item][:url].downcase.starts_with?("http")
@@ -54,6 +54,21 @@ class WishItemsController < ApplicationController
     redirect_to wish_items_path(:anchor => "wish" + params[:id])
   end
   
+  def edit
+    @title = "Edit Wish"
+    @wish_item = WishItem.find(params[:id])
+  end
+  
+  def update
+    if @wish_item.update_attributes(params[:wish_item])
+      flash[:success] = "Updated wish."
+      redirect_back_or root_path
+    else
+      @title = "Edit Wish"
+      render 'edit'
+    end
+  end
+  
   private
   
     def get_users
@@ -68,5 +83,4 @@ class WishItemsController < ApplicationController
       @wish_item = current_user.wish_items.find_by_id(params[:id])
       redirect_to root_path if @wish_item.nil?
     end
-
 end

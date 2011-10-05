@@ -8,7 +8,7 @@ WishList::Application.routes.draw do
       get :draw_excluding
     end
   end
-  resources :wish_items, :only => [:create, :destroy, :index, :show]
+  resources :wish_items, :only => [:create, :destroy, :edit, :update, :index, :show]
   resources :sessions, :only => [:new, :create, :destroy]
   resources :draw_names, :only => [:new, :create, :index]
   resources :draw_exclusions, :only => [:create, :destroy]

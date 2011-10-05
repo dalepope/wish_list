@@ -106,6 +106,11 @@ describe WishItemsController do
         end
       end
       
+      it "should have edit link" do
+        get :index
+        response.should have_selector("a", :content => "edit")
+      end
+      
       it "should have delete link" do
         get :index
         response.should have_selector("a", :content => "delete")
@@ -170,6 +175,141 @@ describe WishItemsController do
       it "should have a flash message" do
         post :create, :wish_item => @attr
         flash[:success].should =~ /added wish/i
+      end
+    end
+  end
+  
+  describe "GET 'edit'" do
+
+    before(:each) do
+      @user = Factory(:user)
+      test_log_in(@user)
+      category = WishCategory.create!(Factory(:wish_category, :name => "Nonege"))
+      @wish = Factory(:wish_item,
+                      :user => @user,
+                      :category => category)
+    end
+
+    describe "for authorized users" do
+    
+      it "should be successful" do
+        get :edit, :id => @wish
+        response.should be_success
+      end
+
+      it "should have the right title" do
+        get :edit, :id => @wish
+        response.should have_selector("title", :content => "Edit Wish")
+      end
+      
+      it "should have a description field" do
+        get :edit, :id => @wish
+        response.should have_selector("textarea[name='wish_item[description]']")
+      end
+
+      it "should have a url field" do
+        get :edit, :id => @wish
+        response.should have_selector("input[name='wish_item[url]'][type='text']")
+      end
+    end
+  end
+  
+  describe "PUT 'update'" do
+
+    before(:each) do
+      @user = Factory(:user)
+      test_log_in(@user)
+      @wish_item = Factory(:wish_item, :user => @user)
+    end
+
+    describe "failure" do
+
+      before(:each) do
+        @attr = { :description => "", :url => "" }
+      end
+
+      it "should render the 'edit' page" do
+        put :update, :id => @wish_item, :wish_item => @attr
+        response.should render_template('edit')
+      end
+
+      it "should have the right title" do
+        put :update, :id => @wish_item, :wish_item => @attr
+        response.should have_selector("title", :content => "Edit Wish")
+      end
+    end
+
+    describe "success" do
+
+      before(:each) do
+        @attr = { :description => "Apple stuffed bears", :url => "http://monkey.com" }
+      end
+
+      it "should change the wish's attributes" do
+        put :update, :id => @wish_item, :wish_item => @attr
+        @wish_item.reload
+        @wish_item.description.should  == @attr[:description]
+        @wish_item.url.should == @attr[:url]
+      end
+
+      it "should redirect to the wish index page" do
+        put :update, :id => @wish_item, :wish_item => @attr
+        response.should redirect_to(root_path)
+      end
+
+      it "should have a flash message" do
+        put :update, :id => @wish_item, :wish_item => @attr
+        flash[:success].should =~ /updated/i
+      end
+    end
+  end
+  
+  describe "authentication of edit/update pages" do
+
+    before(:each) do
+      @user = Factory(:user)
+    end
+
+    describe "for non-logged-in users" do
+
+      before(:each) do
+        category = WishCategory.create!(Factory(:wish_category, :name => "Nonenlu"))
+        @wish = @user.wish_items.build(:description => "Oops wish", :category_id => category.id)
+        @wish.save!
+      end
+    
+      it "should deny access to 'edit'" do
+        get :edit, :id => @wish
+        response.should redirect_to(login_path)
+      end
+
+      it "should deny access to 'update'" do
+        put :update, :id => @wish, :wish_item => {}
+        response.should redirect_to(login_path)
+      end
+    end
+    
+    describe "for logged-in users" do
+
+      describe "editing the wrong user" do
+      
+        before(:each) do
+          category = WishCategory.create!(Factory(:wish_category, :name => "Nonenlu"))
+          @wish = @user.wish_items.build(:description => "Oops wish", :category_id => category.id)
+          @wish.save!
+          wrong_user = Factory(:user, :email => "user@example.net")
+          test_log_in(wrong_user)
+        end
+
+        it "should require matching users for 'edit'" do
+          get :edit, :id => @wish
+          response.should redirect_to(root_path)
+        end
+
+        it "should require matching users for 'update'" do
+          put :update, :id => @wish, :wish_item => {}
+          response.should redirect_to(root_path)
+        end
       end
     end
   end
