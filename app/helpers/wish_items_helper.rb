@@ -88,7 +88,13 @@ module WishItemsHelper
   
   def wrap(content)
     tags = %w(a b strong em br sub sup)
-    sanitize(raw(content.split.map{ |s| wrap_long_string(s) }.join(' ')), :tags => tags, :attributes => %w(href))
+    if content =~ /<(\S)+.*?>.*<\/\1>/
+      # todo: wrap only the visible content (e.g., not invisible hrefs)
+      text = content
+    else
+      text = content.split.map{ |s| wrap_long_string(s) }.join(' ')
+    end
+    sanitize(raw(text), :tags => tags, :attributes => %w(href))
   end
 
   private
