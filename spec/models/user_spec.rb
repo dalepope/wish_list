@@ -292,4 +292,15 @@ describe User do
       @user.should_not be_draw_excluding(@excluded)
     end
   end
+  
+  describe "ownerships" do
+  
+    before(:each) do
+      @user = User.create!(@attr)
+    end
+    
+    it "should have an owns? method" do
+      @user.should respond_to(:owns?)
+    end
+  end
 end

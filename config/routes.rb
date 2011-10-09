@@ -15,6 +15,8 @@ WishList::Application.routes.draw do
   
   match '/login', :to => 'sessions#new'
   match '/logout', :to => 'sessions#destroy'
+
+  post "sessions/switch"
   
   get "wish_items/feed"
   match '/feed' => 'wish_items#feed', :as => :feed, :defaults => { :format => 'atom' }

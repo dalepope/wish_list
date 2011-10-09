@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110923002142) do
+ActiveRecord::Schema.define(:version => 20111006001126) do
 
   create_table "draw_exclusions", :force => true do |t|
     t.integer  "excluder_id"
@@ -32,6 +32,17 @@ ActiveRecord::Schema.define(:version => 20110923002142) do
 
   add_index "drawn_names", ["giver_id"], :name => "index_drawn_names_on_giver_id", :unique => true
   add_index "drawn_names", ["receiver_id"], :name => "index_drawn_names_on_receiver_id", :unique => true
+
+  create_table "ownerships", :force => true do |t|
+    t.integer  "owner_id"
+    t.integer  "owned_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ownerships", ["owned_id"], :name => "index_ownerships_on_owned_id"
+  add_index "ownerships", ["owner_id", "owned_id"], :name => "index_ownerships_on_owner_id_and_owned_id", :unique => true
+  add_index "ownerships", ["owner_id"], :name => "index_ownerships_on_owner_id"
 
   create_table "users", :force => true do |t|
     t.string   "name"

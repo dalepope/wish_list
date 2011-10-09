@@ -69,4 +69,54 @@ describe SessionsController do
       response.should redirect_to(root_path)
     end
   end
+  
+  describe "POST 'switch'" do
+    
+    before(:each) do
+      @user = Factory(:user)
+      @attr = { :id => @user.id }
+    end
+    
+    describe "when not logged in" do
+      
+      it "should redirect to log in screen" do
+        post :switch, :session => @attr
+        response.should redirect_to(login_path)
+      end
+    end
+
+    describe "when logged in" do
+
+      before(:each) do
+        @active_user = test_log_in(Factory(:user, :email => Factory.next(:email)))
+      end
+
+      describe "without access" do
+        it "should redirect to the root path" do
+          post :switch, :session => @attr
+          response.should redirect_to(@active_user)
+          flash.now[:error].should =~ /do not have access/i
+        end
+      end
+      
+      describe "with permission" do
+
+        before(:each) do
+          @ownership = @active_user.ownerships.build(:owned_id => @user.id)
+          @ownership.save
+        end
+
+        it "should log the user in" do
+          post :switch, :session => @attr
+          controller.current_user.should == @user
+          controller.should be_logged_in
+        end
+
+        it "should redirect to the user show page" do
+          post :switch, :session => @attr
+          response.should redirect_to(user_path(@user))
+        end
+      end
+    end
+  end
 end

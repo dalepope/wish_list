@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   has_one :drawn_name, :foreign_key => "giver_id", :dependent => :destroy
   has_many :draw_exclusions, :foreign_key => "excluder_id", :dependent => :destroy
   has_many :draw_excluding, :through => :draw_exclusions, :source => :excluded
+  has_many :ownerships, :foreign_key => "owner_id", :dependent => :destroy
 
   default_scope :order => 'users.name ASC'
   
@@ -78,6 +79,11 @@ class User < ActiveRecord::Base
     draw_exclusions.find_by_excluded_id(excluded).destroy
   end
   
+  # does the user own the specified user
+  def owns?(owned)
+    ownerships.find_by_owned_id(owned)
+  end
+
   # get all users that can be excluded (i.e., all users in the draw other than the 
   # current user and already excluded users)
   def self.draw_excludable(user)
