@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
   end
   
   def switch
-    new_user = User.find_by_id(params[:session][:id])
+    new_user = User.find_by_id(params[:id])
     if current_user.owns?(new_user)
       log_out
       log_in new_user

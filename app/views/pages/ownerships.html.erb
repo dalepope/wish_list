@@ -1,0 +1,21 @@
+<h1>User Ownerships</h1>
+
+<ul class="users">
+  <% @users.each do |user| %>
+    <li>
+      <%= link_to user.name, ownerships_user_path(user) %>
+      <% if user.owned.count > 0 %>
+        owns the following users:
+        <ul>
+          <% user.owned.each do |owned| %>
+            <li>
+              <%= link_to owned.name, owned %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        owns no one
+      <% end %>
+    </li>
+  <% end %>
+</ul>

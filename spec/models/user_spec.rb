@@ -297,10 +297,43 @@ describe User do
   
     before(:each) do
       @user = User.create!(@attr)
+      @owned = Factory(:user)
+    end
+    
+    it "should have a owned method" do
+      @user.should respond_to(:owned)
     end
     
     it "should have an owns? method" do
       @user.should respond_to(:owns?)
+    end
+    
+    it "should have an ownable method" do
+      User.should respond_to(:ownable)
+    end
+    
+    it "should have an own! method" do
+      @user.should respond_to(:own!)
+    end
+    
+    it "should own another user" do
+      @user.own!(@owned)
+      @user.should be_owns(@owned)
+    end
+
+    it "should include the owned user in the ownerships array" do
+      @user.own!(@owned)
+      @user.owned.should include(@owned)
+    end
+    
+    it "should have an unown! method" do
+      @user.should respond_to(:unown!)
+    end
+
+    it "should own another user" do
+      @user.own!(@owned)
+      @user.unown!(@owned)
+      @user.should_not be_owns(@owned)
     end
   end
 end

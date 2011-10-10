@@ -2,21 +2,24 @@ WishList::Application.routes.draw do
 
   get "pages/admin"
   get "pages/draw_rules"
+  get "pages/ownerships"
 
   resources :users do
     member do
       get :draw_excluding
+      get :ownerships
     end
   end
   resources :wish_items, :only => [:create, :destroy, :edit, :update, :index, :show]
   resources :sessions, :only => [:new, :create, :destroy]
   resources :draw_names, :only => [:new, :create, :index]
   resources :draw_exclusions, :only => [:create, :destroy]
+  resources :ownerships, :only => [:create, :destroy]
   
   match '/login', :to => 'sessions#new'
   match '/logout', :to => 'sessions#destroy'
 
-  post "sessions/switch"
+  get "sessions/switch"
   
   get "wish_items/feed"
   match '/feed' => 'wish_items#feed', :as => :feed, :defaults => { :format => 'atom' }

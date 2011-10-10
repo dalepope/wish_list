@@ -1,0 +1,43 @@
+<h1>Ownerships</h1>
+
+<% if @user.owned.count > 0 %>
+  <p><%= relative_user_name(@user) %> owns the following accounts:</p>
+  <ul class="users">
+    <% @user.owned.each do |owned| %>
+      <li>
+        <% unless current_user.admin? %>
+          <%= link_to owned.name, owned %>
+        <% else %>
+          <%= form_for @user.ownerships.find_by_owned_id(owned),
+                       :html => { :method => :delete } do |f| %>
+            <%= f.hidden_field :owned_id %>
+            <%= f.hidden_field :owner_id %>
+            <%= link_to owned.name, owned %>
+            <%= f.submit "Unown" %>
+          <% end %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+  <p>If someone needs to be added or removed from this list, contact <%= webmaster_contact %>.</p>
+<% else %>
+  <p><%= relative_user_name(@user) %> owns no accounts. To own an account, contact <%= webmaster_contact %>.</p>
+<% end %>
+
+<% if current_user.admin? %>
+  <ul class="users">
+    <% @users.each do |user| %>
+      <li>
+        <%= form_for @user.ownerships. 
+                          build(:owned_id => user.id) do |f| %>
+          <%= f.hidden_field :owned_id %>
+          <%= f.hidden_field :owner_id %>
+          <%= link_to user.name, user %> - 
+          <%= f.submit "Own" %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<p>See <%= link_to "all ownerships", pages_ownerships_path %>.</p>

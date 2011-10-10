@@ -70,17 +70,17 @@ describe SessionsController do
     end
   end
   
-  describe "POST 'switch'" do
+  describe "GET 'switch'" do
     
     before(:each) do
       @user = Factory(:user)
-      @attr = { :id => @user.id }
+      @switch_to = @user.id
     end
     
     describe "when not logged in" do
       
       it "should redirect to log in screen" do
-        post :switch, :session => @attr
+        get :switch, :id => @switch_to
         response.should redirect_to(login_path)
       end
     end
@@ -93,7 +93,7 @@ describe SessionsController do
 
       describe "without access" do
         it "should redirect to the root path" do
-          post :switch, :session => @attr
+          get :switch, :id => @switch_to
           response.should redirect_to(@active_user)
           flash.now[:error].should =~ /do not have access/i
         end
@@ -107,13 +107,13 @@ describe SessionsController do
         end
 
         it "should log the user in" do
-          post :switch, :session => @attr
+          get :switch, :id => @switch_to
           controller.current_user.should == @user
           controller.should be_logged_in
         end
 
         it "should redirect to the user show page" do
-          post :switch, :session => @attr
+          get :switch, :id => @switch_to
           response.should redirect_to(user_path(@user))
         end
       end

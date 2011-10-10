@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate, :except => [:show, :index]
   before_filter :correct_user, :only => [:edit, :update, :draw_excluding]
-  before_filter :admin_user, :only => [:new, :create]
+  before_filter :admin_user, :only => [:new, :create, :ownerships]
 
   def new
     @user = User.new
@@ -62,6 +62,14 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     if current_user.admin?
       @users = User.draw_excludable(@user)
+    end
+  end
+  
+  def ownerships
+    @title = "Ownerships"
+    @user = User.find(params[:id])
+    if current_user.admin?
+      @users = User.ownable(@user)
     end
   end
   

@@ -17,6 +17,9 @@
         <% end %>
         <li><%= link_to "Profile", current_user %></li>
         <li><%= link_to "Account", edit_user_path(current_user) %></li>
+        <% current_user.owned.each do |owned| %>
+          <li><%= link_to owned.name, sessions_switch_path(:id => owned.id), :confirm => "You will be logged out and then logged in as " + owned.name + ". Are you sure?" %></li>
+        <% end %>
         <li><%= link_to "Log Out", logout_path, :method => :delete %></li>
       <% else %>
         <li><%= link_to "Log In", login_path %></li>

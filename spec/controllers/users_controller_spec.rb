@@ -796,4 +796,87 @@ describe UsersController do
       end
     end
   end
+    
+  describe "GET 'ownerships'" do
+  
+    before(:each) do
+      @user = Factory(:user)
+    end
+  
+    describe "for non-logged-in users" do
+      it "should deny access" do
+        get :ownerships, :id => @user
+        response.should redirect_to(login_path)
+        flash[:notice].should =~ /log in/i
+      end
+    end
+
+    describe "for wrong users" do
+      it "should deny access" do
+        wrong_user = Factory(:user, :email => "user@example.net")
+        test_log_in(wrong_user)
+        get :ownerships, :id => @user
+        response.should redirect_to(root_path)
+        flash[:error].should =~ /do not have permission/i
+      end
+    end
+    
+    describe "for logged-in users" do
+
+      before(:each) do
+        @user = test_log_in(@user)
+      end
+
+      it "should deny access" do
+        get :ownerships, :id => @user
+        response.should redirect_to(root_path)
+        flash[:error].should =~ /do not have permission/i
+      end
+    end
+      
+    describe "for logged-in admins" do
+
+      before(:each) do
+        @admin = Factory(:user, :name => Factory.next(:name), :email => Factory.next(:email))
+        @admin = test_log_in(@admin)
+        @admin.toggle!(:admin)
+      end
+
+      it "should be successful" do
+        get :ownerships, :id => @user
+        response.should be_success
+      end
+      
+      it "should have the right title" do
+        get :ownerships, :id => @user
+        response.should have_selector("title", :content => "Ownerships")
+      end
+      
+      describe "with owned" do
+      
+        before(:each) do
+          @owned1 = Factory(:user, :email => Factory.next(:email))
+          @user.own!(@owned1)
+          @spare_user = Factory(:user, :name => Factory.next(:name), :email => Factory.next(:email))
+        end
+      
+        it "should list the owned" do
+          get :ownerships, :id => @user
+          response.should have_selector("p", :content => "owns the following")
+          response.should have_selector("li", :content => @owned1.name)
+        end
+        
+        it "should list additional users" do
+          get :ownerships, :id => @user
+          response.should have_selector("li", :content => @spare_user.name)
+        end
+        
+        it "should have own buttons" do
+          get :ownerships, :id => @user
+          response.should have_selector("input", :type => "submit", :value => "Own")
+          response.should have_selector("input", :type => "submit", :value => "Unown")
+        end
+      end
+    end
+  end
 end

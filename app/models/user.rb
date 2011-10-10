@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
   has_many :draw_exclusions, :foreign_key => "excluder_id", :dependent => :destroy
   has_many :draw_excluding, :through => :draw_exclusions, :source => :excluded
   has_many :ownerships, :foreign_key => "owner_id", :dependent => :destroy
+  has_many :owned, :through => :ownerships, :source => :owned
 
   default_scope :order => 'users.name ASC'
   
@@ -84,12 +85,30 @@ class User < ActiveRecord::Base
     ownerships.find_by_owned_id(owned)
   end
 
+  def own!(owned)
+    ownerships.create!(:owned_id => owned.id)
+  end
+
+  def unown!(owned)
+    ownerships.find_by_owned_id(owned).destroy
+  end
+  
   # get all users that can be excluded (i.e., all users in the draw other than the 
   # current user and already excluded users)
   def self.draw_excludable(user)
     clause = "in_draw = 't' and id <> ?"
     if user.draw_exclusions.count > 0
       clause += " and id not in (#{user.draw_exclusions.map(&:excluded_id).join(",")})"
+    end
+    where(clause, user)
+  end
+
+  # get all users that can be owned (i.e., all users other than the 
+  # current user and already owned users)
+  def self.ownable(user)
+    clause = "admin = 'f' and id <> ?"
+    if user.ownerships.count > 0
+      clause += " and id not in (#{user.ownerships.map(&:owned_id).join(",")})"
     end
     where(clause, user)
   end
