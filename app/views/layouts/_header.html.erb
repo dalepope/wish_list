@@ -13,12 +13,12 @@
       <% end %>
       <% if logged_in? %>
         <% if current_user.admin? %>
-          <li><%= link_to "Admin", pages_admin_path %>
+          <li><%= link_to "Admin", pages_admin_path %></li>
         <% end %>
         <li><%= link_to "Profile", current_user %></li>
         <li><%= link_to "Account", edit_user_path(current_user) %></li>
-        <% current_user.owned.each do |owned| %>
-          <li><%= link_to owned.name, sessions_switch_path(:id => owned.id), :confirm => "You will be logged out and then logged in as " + owned.name + ". Are you sure?" %></li>
+        <% if current_user.owned.count > 0 %>
+          <li>Log in as <%= raw(get_owned_links(current_user.owned)) %></li>
         <% end %>
         <li><%= link_to "Log Out", logout_path, :method => :delete %></li>
       <% else %>
