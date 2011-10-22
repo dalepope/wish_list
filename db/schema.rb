@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111006001126) do
+ActiveRecord::Schema.define(:version => 20111022001153) do
 
   create_table "draw_exclusions", :force => true do |t|
     t.integer  "excluder_id"
@@ -22,6 +22,20 @@ ActiveRecord::Schema.define(:version => 20111006001126) do
   add_index "draw_exclusions", ["excluded_id"], :name => "index_draw_exclusions_on_excluded_id"
   add_index "draw_exclusions", ["excluder_id", "excluded_id"], :name => "index_draw_exclusions_on_excluder_id_and_excluded_id", :unique => true
   add_index "draw_exclusions", ["excluder_id"], :name => "index_draw_exclusions_on_excluder_id"
+
+  create_table "drawn_name_histories", :force => true do |t|
+    t.integer  "year"
+    t.integer  "giver_id"
+    t.integer  "receiver_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "drawn_name_histories", ["giver_id"], :name => "index_drawn_name_histories_on_giver_id"
+  add_index "drawn_name_histories", ["receiver_id"], :name => "index_drawn_name_histories_on_receiver_id"
+  add_index "drawn_name_histories", ["year", "giver_id"], :name => "index_drawn_name_histories_on_year_and_giver_id", :unique => true
+  add_index "drawn_name_histories", ["year", "receiver_id"], :name => "index_drawn_name_histories_on_year_and_receiver_id", :unique => true
+  add_index "drawn_name_histories", ["year"], :name => "index_drawn_name_histories_on_year"
 
   create_table "drawn_names", :force => true do |t|
     t.integer  "giver_id"

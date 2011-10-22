@@ -20,6 +20,7 @@ class User < ActiveRecord::Base
 
   has_many :wish_items, :dependent => :destroy
   has_one :drawn_name, :foreign_key => "giver_id", :dependent => :destroy
+  has_many :drawn_name_histories, :foreign_key => "giver_id", :dependent => :destroy
   has_many :draw_exclusions, :foreign_key => "excluder_id", :dependent => :destroy
   has_many :draw_excluding, :through => :draw_exclusions, :source => :excluded
   has_many :ownerships, :foreign_key => "owner_id", :dependent => :destroy
