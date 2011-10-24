@@ -27,3 +27,13 @@
     </tr>
   <% end %>
 </table>
+<%= form_tag(:controller => "draw_name_history", :action => "create") do %>
+  <div class="actions">
+    <%= submit_tag "Copy Draw to History" %>
+  </div>
+<% end %>
+<%= form_tag(:controller => "draw_names", :action => "clear") do %>
+  <div class="actions">
+    <%= submit_tag "Clear Current Draw" %>
+  </div>
+<% end %>

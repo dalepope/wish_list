@@ -15,6 +15,7 @@ WishList::Application.routes.draw do
   resources :draw_names, :only => [:new, :create, :index]
   resources :draw_exclusions, :only => [:create, :destroy]
   resources :ownerships, :only => [:create, :destroy]
+  resources :draw_name_history, :only => [:create]
   
   match '/login', :to => 'sessions#new'
   match '/logout', :to => 'sessions#destroy'
@@ -23,6 +24,8 @@ WishList::Application.routes.draw do
   
   get "wish_items/feed"
   match '/feed' => 'wish_items#feed', :as => :feed, :defaults => { :format => 'atom' }
+
+  post "draw_names/clear"
   
   root :to => 'wish_items#index'
   

@@ -48,6 +48,11 @@ class DrawNamesController < ApplicationController
     @title = "Drawn Names"
   end
   
+  def clear
+    DrawnName.delete_all
+    render 'index'
+  end
+  
   private
   
     def admin_user
