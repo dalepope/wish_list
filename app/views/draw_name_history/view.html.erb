@@ -1,0 +1,31 @@
+<h1>Past Drawn Names</h1>
+
+<% year = nil %>
+<% @drawn_names.each do |drawn_name| %>
+  <% if year != drawn_name.year %>
+    <%= "</table>" unless year == nil %>
+    <% year = drawn_name.year %>
+    <h3>Christmas <%= year %></h3>
+    <table class="users">
+  <% end %>
+  <tr>
+    <td>
+      <%= gravatar_for drawn_name.giver, :size => 30 %>
+      <%= link_to drawn_name.giver.name, drawn_name.giver %>
+    </td>
+    <td>picked</td>
+    <td>
+      <%= gravatar_for drawn_name.receiver, :size => 30 %>
+      <%= link_to drawn_name.receiver.name, drawn_name.receiver %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<% if current_user.admin %>
+  <%= form_tag(:controller => "draw_name_history", :action => "create") do %>
+    <div class="actions">
+      <%= submit_tag "Copy Draw to History" %>
+    </div>
+  <% end %>
+<% end %>

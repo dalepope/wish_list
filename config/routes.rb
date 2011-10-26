@@ -27,6 +27,8 @@ WishList::Application.routes.draw do
 
   post "draw_names/clear"
   
+  get 'draw_name_history/view'
+  
   root :to => 'wish_items#index'
   
   # The priority is based upon order of creation:

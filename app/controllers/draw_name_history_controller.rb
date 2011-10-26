@@ -1,6 +1,6 @@
 class DrawNameHistoryController < ApplicationController
   before_filter :authenticate
-  before_filter :admin_user
+  before_filter :admin_user, :except => :view
   
   def create
     drawn_names = DrawnName.all
@@ -31,5 +31,10 @@ class DrawNameHistoryController < ApplicationController
   
     flash[:success] = "History stored" if success
     redirect_to draw_names_path
+  end
+  
+  def view
+    @title = "Name Draw History"
+    @drawn_names = DrawnNameHistory.order("year desc")
   end
 end

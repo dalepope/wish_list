@@ -313,7 +313,7 @@ describe UsersController do
 
       it "should not show the Christmas draw status" do
         get :show, :id => @user
-        response.should_not have_selector("p", :content => "Christmas")
+        response.should_not have_selector("p", :content => "the Christmas draw")
       end
 
       it "should show the wish item form" do
